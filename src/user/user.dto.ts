@@ -11,6 +11,11 @@ export enum Role {
   BRANCH_MANAGER = 'branch_manager',
 }
 
+export enum TokenType {
+  EMAIL_VERIFICATION = 'Email Verification',
+  FORGOT_PASSWORD = 'Forgot Password',
+}
+
 export class AuthUserDto {
   user: User;
   accessToken?: string;
@@ -32,13 +37,6 @@ export class CreateUserDto {
   @IsEmail()
   @Transform((o) => o.value.toLowerCase().trim())
   email: string;
-
-  @ApiProperty({ enum: Role, default: Role.BRANCH_MANAGER })
-  @IsEnum(Role, {
-    message:
-      'Role must be either harvesting_manager,farm_warehouse_manager,city_warehouse_manager or branch_manager',
-  })
-  role: Role;
 }
 
 export class SignInDto {

@@ -8,22 +8,15 @@ import { AuthUserDto, CreateUserDto, SignInDto } from './user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('seed-admin')
-  async seedAdmin() {
-    return this.userService.seedAdmin();
-  }
-
-  @Post('create-user')
-  @ApiBearerAuth()
-  @UseGuards(JwtAdminGuard)
+  @Post('sign-up')
   @ApiResponse({
     status: 201,
     type: AuthUserDto,
     description: 'User created successfully.',
   })
   async createUser(@Body() body: CreateUserDto): Promise<AuthUserDto> {
-    const createdUser = await this.userService.createUser(body);
-    return { user: createdUser };
+    const createdUser = await this.userService.register(body);
+    return createdUser;
   }
 
   @Post('sign-in')
@@ -33,6 +26,17 @@ export class UserController {
     description: 'User signed in successfully.',
   })
   async SignIn(@Body() body: SignInDto): Promise<AuthUserDto> {
+    const user = await this.userService.signIn(body);
+    return user;
+  }
+
+  @Post('sign-in')
+  @ApiResponse({
+    status: 201,
+    type: AuthUserDto,
+    description: 'User signed in successfully.',
+  })
+  async veriftOTP(@Body() body: SignInDto): Promise<AuthUserDto> {
     const user = await this.userService.signIn(body);
     return user;
   }

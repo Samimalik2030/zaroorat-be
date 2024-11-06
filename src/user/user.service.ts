@@ -37,16 +37,27 @@ export class UserService {
     }
   }
 
-  async createUser(body: CreateUserDto): Promise<User> {
+  async register(body: CreateUserDto): Promise<AuthUserDto> {
     const existingUser = await this.userModel.findOne({ email: body.email });
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
     const hashedPassword = await bcrypt.hash(body.password, 10);
-    return await this.userModel.create({
+    const newUser = await this.userModel.create({
       ...body,
       password: hashedPassword,
     });
+
+    const accessToken = await this.jwtService.signAsync({
+      email: newUser.email,
+      name: newUser.username,
+      password: newUser.password,
+    });
+
+    return {
+      user: newUser,
+      accessToken: accessToken,
+    };
   }
 
   async signIn(body: SignInDto): Promise<AuthUserDto> {
@@ -61,9 +72,9 @@ export class UserService {
     }
 
     const accessToken = await this.jwtService.signAsync({
-      name: user.username,
       email: user.email,
-      role: user.role,
+      name: user.username,
+      password: user.password,
     });
 
     return {

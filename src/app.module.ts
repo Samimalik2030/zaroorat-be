@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SchemaToClassInterceptor } from './interceptors/SchemaToClassInterceptor';
+import { TokenModule } from './token/token.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { SchemaToClassInterceptor } from './interceptors/SchemaToClassIntercepto
       inject: [ConfigService],
     }),
     UserModule,
+    TokenModule,
   ],
   controllers: [AppController],
   providers: [

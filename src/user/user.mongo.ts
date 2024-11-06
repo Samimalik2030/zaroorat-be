@@ -27,6 +27,11 @@ export class User {
   @Prop({ type: Date })
   updatedAt: Date;
 
+  @Prop({
+    default: false,
+  })
+  isEmailVerified: boolean;
+
   @Exclude()
   __v: number;
 }
