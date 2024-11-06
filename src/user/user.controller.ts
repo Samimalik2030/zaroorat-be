@@ -1,12 +1,17 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
-import { JwtAdminGuard } from 'src/guards/jwtAdminGuard';
 import { AuthUserDto, CreateUserDto, SignInDto } from './user.dto';
+import { User } from './user.mongo';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('get-users')
+  async getUsers(): Promise<User[]> {
+    return await this.userService.getUsers();
+  }
 
   @Post('sign-up')
   @ApiResponse({

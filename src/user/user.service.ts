@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './user.mongo';
@@ -18,23 +17,10 @@ export class UserService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
   ) {}
-  async seedAdmin() {
-    const admin = await this.userModel.findOne({ role: 'admin' });
-    if (!admin) {
-      const hashedPassword = await bcrypt.hash('password', 10);
-      const newAdmin = new this.userModel({
-        username: 'admin',
-        password: hashedPassword,
-        role: 'admin',
-        email: 'admin@email.com',
-      });
 
-      await newAdmin.save();
-
-      return newAdmin;
-    } else {
-      throw new ConflictException('Admin already exists');
-    }
+  async getUsers(): Promise<User[]> {
+    const users = await this.userModel.find();
+    return users;
   }
 
   async register(body: CreateUserDto): Promise<AuthUserDto> {
