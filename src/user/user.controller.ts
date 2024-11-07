@@ -7,6 +7,7 @@ import {
   ForgotPasswordDTO,
   SignInDto,
   TokenType,
+  VerifyOtpDTO,
 } from './user.dto';
 import { User } from './user.mongo';
 import { TokenService } from 'src/token/token.service';
@@ -57,8 +58,8 @@ export class UserController {
     type: AuthUserDto,
     description: 'User signed in successfully.',
   })
-  async veriftOTP(@Body() body: SignInDto): Promise<AuthUserDto> {
-    const user = await this.userService.signIn(body);
-    return user;
+  async veriftOTP(@Body() body: VerifyOtpDTO): Promise<string> {
+    const verify = await this.userService.verifyOtp(body);
+    return verify;
   }
 }

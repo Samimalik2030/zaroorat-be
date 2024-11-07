@@ -64,3 +64,21 @@ export class ForgotPasswordDTO {
   @IsString()
   type: TokenType;
 }
+
+export class VerifyOtpDTO {
+  @ApiProperty({ default: 'sami@email.com' })
+  @IsNotEmpty()
+  @IsEmail()
+  @Transform((o) => o.value.toLowerCase().trim())
+  email?: string;
+
+  @ApiProperty({ default: TokenType.FORGOT_PASSWORD, required: true })
+  @IsNotEmpty()
+  @IsString()
+  type: TokenType;
+
+  @ApiProperty({ default: 535443 })
+  @IsNotEmpty()
+  @IsString()
+  otp: string;
+}

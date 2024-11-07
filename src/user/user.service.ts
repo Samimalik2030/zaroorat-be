@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Injectable,
@@ -9,18 +10,30 @@ import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './user.mongo';
-import { AuthUserDto, CreateUserDto, SignInDto } from './user.dto';
+import {
+  AuthUserDto,
+  CreateUserDto,
+  SignInDto,
+  TokenType,
+  VerifyOtpDTO,
+} from './user.dto';
+import { TokenService } from 'src/token/token.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
+    private readonly otpService: TokenService,
   ) {}
 
   async getUsers(): Promise<User[]> {
     const users = await this.userModel.find();
     return users;
+  }
+
+  async findUser(username: string): Promise<User> {
+    return this.userModel.findOne({ username });
   }
 
   async register(body: CreateUserDto): Promise<AuthUserDto> {
@@ -69,7 +82,27 @@ export class UserService {
     };
   }
 
-  async findUser(username: string): Promise<User> {
-    return this.userModel.findOne({ username }).exec();
+  async verifyOtp(body: VerifyOtpDTO): Promise<any> {
+    const otpObject = await this.otpService.find(body.email, body.type);
+    const isMatched = await this.otpService.verify(otpObject.hash, body.otp);
+    if (!isMatched) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+    return {
+      message: 'Email verified',
+    };
   }
+
+  // async virifyOtp(@Body() body: VerifyOtpDto): Promise<MessageDto | TokenDto> {
+  //   const token = await this.tokenService.findOneBy(body.email, body.type);
+  //   if (
+  //     !token ||
+  //     !this.tokenService.verify(token, body.otp) ||
+  //     token.isExpired
+  //   ) {
+  //     throw new BadRequestException('Invalid or expired token');
+  //   }
+
+  //   return { message: 'OTP Verified Successfully.' };
+  // }
 }
