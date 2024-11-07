@@ -7,6 +7,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SchemaToClassInterceptor } from './interceptors/SchemaToClassInterceptor';
 import { TokenModule } from './token/token.module';
+import { ImageKitModule } from './image-kit/image-kit.module';
+
+
 
 
 @Module({
@@ -23,6 +26,7 @@ import { TokenModule } from './token/token.module';
     }),
     UserModule,
     TokenModule,
+    ImageKitModule,
   ],
   controllers: [AppController],
   providers: [
