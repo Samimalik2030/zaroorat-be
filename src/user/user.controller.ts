@@ -1,12 +1,22 @@
 import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
-import { AuthUserDto, CreateUserDto, SignInDto } from './user.dto';
+import {
+  AuthUserDto,
+  CreateUserDto,
+  ForgotPasswordDTO,
+  SignInDto,
+  TokenType,
+} from './user.dto';
 import { User } from './user.mongo';
+import { TokenService } from 'src/token/token.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   @Get('get-users')
   async getUsers(): Promise<User[]> {
@@ -35,7 +45,13 @@ export class UserController {
     return user;
   }
 
-  @Post('sign-in')
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: ForgotPasswordDTO): Promise<string> {
+    const otp = await this.tokenService.generate(body.email, body.type);
+    return `Please use this ${otp} to verify.`;
+  }
+
+  @Post('verify-otp')
   @ApiResponse({
     status: 201,
     type: AuthUserDto,

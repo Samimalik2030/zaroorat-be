@@ -40,7 +40,7 @@ export class CreateUserDto {
 }
 
 export class SignInDto {
-  @ApiProperty({ default: 'admin@email.com' })
+  @ApiProperty({ default: 'sami@email.com' })
   @IsNotEmpty()
   @IsEmail()
   @Transform((o) => o.value.toLowerCase().trim())
@@ -50,4 +50,17 @@ export class SignInDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+}
+
+export class ForgotPasswordDTO {
+  @ApiProperty({ default: 'sami@email.com' })
+  @IsNotEmpty()
+  @IsEmail()
+  @Transform((o) => o.value.toLowerCase().trim())
+  email: string;
+
+  @ApiProperty({ default: TokenType.FORGOT_PASSWORD, required: true })
+  @IsNotEmpty()
+  @IsString()
+  type: TokenType;
 }
