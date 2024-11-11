@@ -48,9 +48,9 @@ export class UserService {
     });
 
     const accessToken = await this.jwtService.signAsync({
+      sub: newUser._id,
       email: newUser.email,
       name: newUser.username,
-      password: newUser.password,
     });
 
     return {
@@ -71,9 +71,9 @@ export class UserService {
     }
 
     const accessToken = await this.jwtService.signAsync({
+      sub: user._id,
       email: user.email,
       name: user.username,
-      password: user.password,
     });
 
     return {

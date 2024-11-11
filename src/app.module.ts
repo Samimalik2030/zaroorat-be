@@ -8,6 +8,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SchemaToClassInterceptor } from './interceptors/SchemaToClassInterceptor';
 import { TokenModule } from './token/token.module';
 import { ImageKitModule } from './image-kit/image-kit.module';
+import { PostsModule } from './posts/posts.module';
 
 
 
@@ -27,6 +28,7 @@ import { ImageKitModule } from './image-kit/image-kit.module';
     UserModule,
     TokenModule,
     ImageKitModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [
