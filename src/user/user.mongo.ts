@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Mongoose, Types } from 'mongoose';
 import { MongoSchema } from '../decorator/mongo-schema.decorator';
 import { Role } from './user.dto';
 

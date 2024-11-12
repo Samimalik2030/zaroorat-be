@@ -20,6 +20,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 import { PostsService } from './posts.service';
 import { ApiFile } from 'src/decorator/api-file.decorator';
+import { User } from 'src/user/user.mongo';
+import { AuthenticatedRequest } from 'src/interfaces/request.interface';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -33,10 +35,11 @@ export class PostsController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   async createPost(
-    @Req() req: Request,
+    @Req() req: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<any> {
-    const userId = '';
-    return this.postsService.createPost(file, userId);
+    const id = req.user;
+    console.log(id);
+    return this.postsService.createPost(file, id);
   }
 }

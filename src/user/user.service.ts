@@ -14,7 +14,7 @@ import {
   AuthUserDto,
   CreateUserDto,
   SignInDto,
-  TokenType,
+  UserDto,
   VerifyOtpDTO,
 } from './user.dto';
 import { TokenService } from 'src/token/token.service';
@@ -32,6 +32,9 @@ export class UserService {
     return users;
   }
 
+  async findUserById(id: string): Promise<UserDto> {
+    return this.userModel.findById(id);
+  }
   async findUser(username: string): Promise<User> {
     return this.userModel.findOne({ username });
   }
