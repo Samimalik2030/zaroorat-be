@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Types } from 'mongoose';
-
 
 export class PostDTO {
   @ApiProperty({ description: 'URL of the image' })
@@ -11,12 +9,12 @@ export class PostDTO {
 
   @ApiProperty({ description: 'ID of the user who created the post' })
   @IsNotEmpty()
-  userId: Types.ObjectId;
+  userId: string;
 
   @ApiProperty({ description: 'List of comment IDs' })
   @IsOptional()
   @IsArray()
-  comments: Types.ObjectId[];
+  comments: string[];
 
   @ApiProperty({ description: 'Creation date of the post' })
   @IsOptional()

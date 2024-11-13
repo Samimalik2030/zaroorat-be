@@ -1,25 +1,28 @@
-import { Injectable } from '@nestjs/common';
-
-// Using `require` to import the ImageKit module
-const ImageKit = require('imagekit');
+import { Inject, Injectable } from '@nestjs/common';
+import ImageKit from 'imagekit';
+import { UploadResponse } from 'imagekit/dist/libs/interfaces';
 
 @Injectable()
 export class ImageKitService {
-  private imageKit: InstanceType<typeof ImageKit>; 
+  constructor(
+    @Inject('IMAGEKIT_INSTANCE') private readonly imageKit: ImageKit,
+  ) {}
 
-  constructor() {
-    this.imageKit = new ImageKit({
-      publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-      privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-      urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
-    });
+  async getImage(id: string): Promise<any> {
+    const image = await this.imageKit.getFileDetails(id);
+    return image;
   }
 
-  async uploadImage(file: Express.Multer.File) {
-    const uploadedImage = await this.imageKit.upload({
+  async uploadImage(file: Express.Multer.File): Promise<any> {
+    const { fileId, url } = await this.imageKit.upload({
       file: file.buffer.toString('base64'),
       fileName: `${Date.now()}-${file.originalname}`,
     });
-    return uploadedImage.url;
+    return { fileId, url };
+  }
+
+  async deleteImage(id: string): Promise<any> {
+    const deletedImage = await this.imageKit.deleteFile(id);
+    return deletedImage;
   }
 }

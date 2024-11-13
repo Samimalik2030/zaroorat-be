@@ -8,10 +8,13 @@ export type PostDocument = HydratedDocument<Post>;
 @MongoSchema()
 export class Post {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: Types.ObjectId;
+  userId: string;
 
   @Prop()
   url: string;
+
+  @Prop()
+  imageId: string;
 
   @Prop({ type: [Types.ObjectId], ref: 'Comment', default: [] })
   comments: Types.ObjectId[];
