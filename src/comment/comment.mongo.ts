@@ -1,25 +1,22 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Mongoose, Schema, Types } from 'mongoose';
 import { MongoSchema } from '../decorator/mongo-schema.decorator';
 import { User } from 'src/user/user.mongo';
-import { Comment } from 'src/comment/comment.mongo';
-import { Schema } from 'mongoose';
-export type PostDocument = HydratedDocument<Post>;
+import { Post } from 'src/posts/posts.mongo';
+
+export type CommentDocument = HydratedDocument<Comment>;
 
 @MongoSchema()
-export class Post {
+export class Comment {
   @Prop({ type: Schema.Types.ObjectId, ref: 'User', required: true })
   userId: User;
 
-  @Prop()
-  url: string;
+  @Prop({ type: Schema.Types.ObjectId, ref: 'Post', required: true })
+  postId: Post;
 
   @Prop()
-  imageId: string;
-
-  @Prop({ type: [Schema.Types.ObjectId], ref: 'Comment', default: [] })
-  comments: Comment[];
+  comment: string;
 
   @Prop({ type: Date })
   createdAt: Date;
@@ -31,4 +28,4 @@ export class Post {
   __v: number;
 }
 
-export const PostSchema = SchemaFactory.createForClass(Post);
+export const CommentSchema = SchemaFactory.createForClass(Comment);

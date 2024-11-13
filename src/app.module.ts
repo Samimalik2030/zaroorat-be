@@ -9,9 +9,8 @@ import { SchemaToClassInterceptor } from './interceptors/SchemaToClassIntercepto
 import { TokenModule } from './token/token.module';
 import { ImageKitModule } from './image-kit/image-kit.module';
 import { PostsModule } from './posts/posts.module';
-
-
-
+import { CommentModule } from './comment/comment.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,10 +24,15 @@ import { PostsModule } from './posts/posts.module';
       }),
       inject: [ConfigService],
     }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1h' },
+    }),
     UserModule,
     TokenModule,
     ImageKitModule,
     PostsModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [

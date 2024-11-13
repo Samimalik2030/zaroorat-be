@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post } from './posts.mongo';
-import { Model, set } from 'mongoose';
+import { Model, set, Types } from 'mongoose';
 import { PostDTO } from './posts.dto';
 import { ImageKitService } from 'src/image-kit/image-kit.service';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
@@ -94,5 +94,18 @@ export class PostsService {
     } catch (error) {
       throw new Error(`Failed to delete post: ${error.message}`);
     }
+  }
+
+  async pushCommentIds(postId: string, id: Types.ObjectId): Promise<string> {
+    await this.postModel.findOneAndUpdate(
+      { _id: postId },
+      {
+        $push: {
+          comments: id,
+        },
+      },
+      { new: true },
+    );
+    return 'Comment pushed successfully!';
   }
 }
