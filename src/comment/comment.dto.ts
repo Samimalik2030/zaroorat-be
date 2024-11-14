@@ -10,3 +10,9 @@ export class createCommentDto {
   @IsString()
   comment: string;
 }
+
+export class UpdateCommentDto {
+  @ApiProperty()
+  @IsString()
+  comment: string;
+}

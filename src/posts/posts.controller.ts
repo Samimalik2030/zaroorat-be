@@ -46,7 +46,7 @@ export class PostsController {
     return post;
   }
 
-  @Get('user:id')
+  @Get('user/:id')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   async getPostsOfUser(@Req() req: AuthenticatedRequest): Promise<any> {
