@@ -1,9 +1,18 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 import { createCommentDto } from './comment.dto';
 import { AuthenticatedRequest } from 'src/interfaces/request.interface';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Comment } from './comment.mongo';
 
 @Controller('comment')
 @ApiTags('Comments')
@@ -20,5 +29,13 @@ export class CommentController {
     const { id } = req.user;
     const comment = await this.CommentService.createComment(id, body);
     return comment;
+  }
+
+  @Post('post/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async getCommentsByPostId(@Param('id') id: string): Promise<Comment[]> {
+    const comments = this.CommentService.getCommentsOfPost(id);
+    return comments;
   }
 }

@@ -5,6 +5,7 @@ import { Model, set, Types } from 'mongoose';
 import { PostDTO } from './posts.dto';
 import { ImageKitService } from 'src/image-kit/image-kit.service';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
+import { Comment } from 'src/comment/comment.mongo';
 
 @Injectable()
 export class PostsService {
@@ -31,6 +32,13 @@ export class PostsService {
   async getPost(id: string): Promise<any> {
     const post = await this.postModel.findById(id);
     return post;
+  }
+
+  async getPostsOfUser(id: string): Promise<Post[]> {
+    const posts = await this.postModel.find({
+      userId: id,
+    });
+    return posts;
   }
 
   async updatePost(id: string, file: Express.Multer.File): Promise<any> {
@@ -96,16 +104,15 @@ export class PostsService {
     }
   }
 
-  async pushCommentIds(postId: string, id: Types.ObjectId): Promise<string> {
-    await this.postModel.findOneAndUpdate(
-      { _id: postId },
+  async attachComment(id: string, comment: Comment): Promise<Post> {
+    return this.postModel.findOneAndUpdate(
+      { _id: id },
       {
         $push: {
-          comments: id,
+          comments: comment,
         },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
-    return 'Comment pushed successfully!';
   }
 }

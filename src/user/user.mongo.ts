@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Exclude } from 'class-transformer';
-import { HydratedDocument, Mongoose, Types } from 'mongoose';
+import { Exclude, Transform } from 'class-transformer';
+import { HydratedDocument, Mongoose, ObjectId, Types } from 'mongoose';
 import { MongoSchema } from '../decorator/mongo-schema.decorator';
 import { Role } from './user.dto';
 
@@ -8,6 +8,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @MongoSchema()
 export class User {
+  @Transform((obj) => obj.value.toString())
+  _id: Types.ObjectId;
+
   @Prop()
   username: string;
 

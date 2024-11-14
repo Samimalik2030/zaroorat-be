@@ -5,22 +5,12 @@ import {
   UseInterceptors,
   UseGuards,
   Req,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
   Param,
   Get,
   Delete,
   Patch,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 import { PostsService } from './posts.service';
@@ -53,6 +43,15 @@ export class PostsController {
   ): Promise<any> {
     const { id } = req.user;
     const post = await this.postsService.createPost(file, id);
+    return post;
+  }
+
+  @Get('user:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async getPostsOfUser(@Req() req: AuthenticatedRequest): Promise<any> {
+    const { id } = req.user;
+    const post = await this.postsService.getPostsOfUser(id);
     return post;
   }
 

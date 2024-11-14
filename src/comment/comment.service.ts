@@ -9,7 +9,6 @@ import { PostsService } from 'src/posts/posts.service';
 export class CommentService {
   constructor(
     @InjectModel(Comment.name) private readonly commentModel: Model<Comment>,
-    private readonly PostService: PostsService,
   ) {}
 
   async createComment(userId: string, body: createCommentDto) {
@@ -18,8 +17,11 @@ export class CommentService {
       postId: body.postId,
       userId: userId,
     });
-
-    await this.PostService.pushCommentIds(body.postId, newComment.id);
     return newComment;
+  }
+
+  async getCommentsOfPost(id: string): Promise<Comment[]> {
+    const comments = await this.commentModel.find({ postId: id });
+    return comments;
   }
 }
