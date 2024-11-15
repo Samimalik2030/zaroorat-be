@@ -13,10 +13,11 @@ import {
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
-import { PostsService } from './posts.service';
+
 import { ApiFile } from 'src/decorator/api-file.decorator';
 import { AuthenticatedRequest } from 'src/interfaces/request.interface';
-import { PostDTO } from './posts.dto';
+import { PostsService } from '../service/posts.service';
+import { PostDTO } from '../dto/posts.dto';
 
 @ApiTags('Posts')
 @Controller('posts')

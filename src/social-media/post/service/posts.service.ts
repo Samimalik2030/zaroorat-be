@@ -1,11 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post } from './posts.mongo';
 import { Model, set, Types } from 'mongoose';
-import { PostDTO } from './posts.dto';
 import { ImageKitService } from 'src/image-kit/image-kit.service';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
-import { Comment } from 'src/comment/comment.mongo';
+import { Post } from '../schema/posts.mongo';
 
 @Injectable()
 export class PostsService {

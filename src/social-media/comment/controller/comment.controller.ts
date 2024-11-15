@@ -9,12 +9,13 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CommentService } from './comment.service';
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
-import { createCommentDto, UpdateCommentDto } from './comment.dto';
+
 import { AuthenticatedRequest } from 'src/interfaces/request.interface';
 import { ApiBearerAuth, ApiParam, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { Comment } from './comment.mongo';
+import { createCommentDto, UpdateCommentDto } from '../dto/comment.dto';
+import { CommentService } from '../service/comment.service';
+import { Comment } from '../schema/comment.mongo';
 
 @Controller('comment')
 @ApiTags('Comments')

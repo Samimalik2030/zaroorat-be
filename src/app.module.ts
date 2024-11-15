@@ -8,9 +8,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SchemaToClassInterceptor } from './interceptors/SchemaToClassInterceptor';
 import { TokenModule } from './token/token.module';
 import { ImageKitModule } from './image-kit/image-kit.module';
-import { PostsModule } from './posts/posts.module';
-import { CommentModule } from './comment/comment.module';
 import { JwtModule } from '@nestjs/jwt';
+import { SocialMediaModule } from './social-media/social-media.module';
 
 @Module({
   imports: [
@@ -31,8 +30,8 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     TokenModule,
     ImageKitModule,
-    PostsModule,
-    CommentModule,
+
+    SocialMediaModule,
   ],
   controllers: [AppController],
   providers: [

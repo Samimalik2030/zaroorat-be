@@ -1,10 +1,12 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude, Transform } from 'class-transformer';
 import { HydratedDocument, Mongoose, Schema, Types } from 'mongoose';
-import { MongoSchema } from '../decorator/mongo-schema.decorator';
+
 import { User } from 'src/user/user.mongo';
-import { Post } from 'src/posts/posts.mongo';
+
 import { isInstance } from 'class-validator';
+import { MongoSchema } from 'src/decorator/mongo-schema.decorator';
+import { Post } from 'src/social-media/post/schema/posts.mongo';
 
 export type CommentDocument = HydratedDocument<Comment>;
 
