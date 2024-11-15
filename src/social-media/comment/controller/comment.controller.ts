@@ -12,7 +12,7 @@ import {
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 
 import { AuthenticatedRequest } from 'src/interfaces/request.interface';
-import { ApiBearerAuth, ApiParam, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { createCommentDto, UpdateCommentDto } from '../dto/comment.dto';
 import { CommentService } from '../service/comment.service';
 import { Comment } from '../schema/comment.mongo';
