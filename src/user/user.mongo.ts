@@ -21,7 +21,7 @@ export class User {
   @Exclude()
   password: string;
 
-  @Prop({ enum: Role, default: Role.BRANCH_MANAGER })
+  @Prop({ enum: Role, default: Role.ADMIN })
   role: Role;
 
   @Prop({ type: Date })
@@ -30,10 +30,6 @@ export class User {
   @Prop({ type: Date })
   updatedAt: Date;
 
-  @Prop({
-    default: false,
-  })
-  isEmailVerified: boolean;
 
   @Exclude()
   __v: number;

@@ -11,6 +11,7 @@ import {
 } from './user.dto';
 import { User } from './user.mongo';
 import { TokenService } from 'src/token/token.service';
+import { JwtGuard } from 'src/guards/Guard';
 
 @Controller('users')
 export class UserController {
@@ -18,22 +19,6 @@ export class UserController {
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
   ) {}
-
-  @Get('get-users')
-  async getUsers(): Promise<User[]> {
-    return await this.userService.getUsers();
-  }
-
-  @Post('sign-up')
-  @ApiResponse({
-    status: 201,
-    type: AuthUserDto,
-    description: 'User created successfully.',
-  })
-  async createUser(@Body() body: CreateUserDto): Promise<AuthUserDto> {
-    const createdUser = await this.userService.register(body);
-    return createdUser;
-  }
 
   @Post('sign-in')
   @ApiResponse({

@@ -27,39 +27,18 @@ export class UserService {
     private readonly otpService: TokenService,
   ) {}
 
-  async getUsers(): Promise<User[]> {
-    const users = await this.userModel.find();
-    return users;
-  }
 
-  async findUserById(id: string): Promise<UserDto> {
-    return this.userModel.findById(id);
-  }
-  async findUser(username: string): Promise<User> {
-    return this.userModel.findOne({ username });
-  }
-
-  async register(body: CreateUserDto): Promise<AuthUserDto> {
-    const existingUser = await this.userModel.findOne({ email: body.email });
-    if (existingUser) {
-      throw new ConflictException('Email already exists');
-    }
+   async first(data:Partial<User>):Promise<User>{
+    return await this.userModel.findOne(data);
+   }
+  async seedAdmin(body:Partial<User>):Promise<User> {  
     const hashedPassword = await bcrypt.hash(body.password, 10);
-    const newUser = await this.userModel.create({
+    return await this.userModel.create({
       ...body,
       password: hashedPassword,
     });
 
-    const accessToken = await this.jwtService.signAsync({
-      sub: newUser._id,
-      email: newUser.email,
-      name: newUser.username,
-    });
-
-    return {
-      user: newUser,
-      accessToken: accessToken,
-    };
+ 
   }
 
   async signIn(body: SignInDto): Promise<AuthUserDto> {
