@@ -19,7 +19,7 @@ import { SeedService } from './seeder/seeder.service';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('DATABASE_URL'),
+        uri: configService.get<string>('MONGO_URI'),
       }),
       inject: [ConfigService],
     }),
@@ -30,7 +30,6 @@ import { SeedService } from './seeder/seeder.service';
     UserModule,
     TokenModule,
     ImageKitModule,
-
   ],
   controllers: [AppController],
   providers: [
