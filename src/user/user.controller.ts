@@ -3,8 +3,8 @@ import { UserService } from './user.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import {
   AuthUserDto,
-  CreateUserDto,
   ForgotPasswordDTO,
+  ResetPasswordDTO,
   SignInDto,
   TokenType,
   VerifyOtpDTO,
@@ -20,6 +20,8 @@ export class UserController {
     private readonly tokenService: TokenService,
   ) {}
 
+
+  
   @Post('sign-in')
   @ApiResponse({
     status: 201,
@@ -46,5 +48,17 @@ export class UserController {
   async veriftOTP(@Body() body: VerifyOtpDTO): Promise<string> {
     const verify = await this.userService.verifyOtp(body);
     return verify;
+  }
+
+  @Post('reset-password')
+  @ApiResponse({
+    status: 201,
+    type: AuthUserDto,
+    description: 'User signed in successfully.',
+  })
+
+  async resetPassword(@Body() body: ResetPasswordDTO): Promise<User> {
+    const user = await this.userService.resetPassword(body);
+    return user;
   }
 }

@@ -10,6 +10,8 @@ import { TokenModule } from './token/token.module';
 import { ImageKitModule } from './image-kit/image-kit.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SeedService } from './seeder/seeder.service';
+import { InquiryModule } from './inquiry/inquiry.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { SeedService } from './seeder/seeder.service';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI'),
+        uri: configService.get<string>('DATABASE_URL'),
       }),
       inject: [ConfigService],
     }),
@@ -30,6 +32,8 @@ import { SeedService } from './seeder/seeder.service';
     UserModule,
     TokenModule,
     ImageKitModule,
+    InquiryModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [

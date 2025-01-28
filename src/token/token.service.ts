@@ -54,7 +54,6 @@ export class TokenService {
   }
 
   async verify(otp: string, hash: string): Promise<boolean> {
-    console.log(otp,hash)
     return await bcrypt.compareSync(hash, otp);
   }
 }

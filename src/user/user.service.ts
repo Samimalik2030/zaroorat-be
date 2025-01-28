@@ -12,9 +12,11 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from './user.mongo';
 import {
   AuthUserDto,
-  CreateUserDto,
+
+  ResetPasswordDTO,
+
   SignInDto,
-  UserDto,
+
   VerifyOtpDTO,
 } from './user.dto';
 import { TokenService } from 'src/token/token.service';
@@ -24,7 +26,8 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
-    private readonly otpService: TokenService,
+    private readonly tokenService: TokenService,
+
   ) {}
 
 
@@ -64,27 +67,37 @@ export class UserService {
     };
   }
 
-  async verifyOtp(body: VerifyOtpDTO): Promise<any> {
-    const otpObject = await this.otpService.find(body.email, body.type);
-    const isMatched = await this.otpService.verify(otpObject.hash, body.otp);
-    if (!isMatched) {
+
+  async verifyOtp(@Body() body: VerifyOtpDTO): Promise<any> {
+    const token = await this.tokenService.find(body.email, body.type);
+    if (
+      !token ||
+      !this.tokenService.verify(body.otp, body.otp) ||
+      token.isExpired
+    ) {
       throw new BadRequestException('Invalid or expired token');
     }
-    return {
-      message: 'Email verified',
-    };
+
+    return { message: 'OTP Verified Successfully.' };
   }
 
-  // async virifyOtp(@Body() body: VerifyOtpDto): Promise<MessageDto | TokenDto> {
-  //   const token = await this.tokenService.findOneBy(body.email, body.type);
-  //   if (
-  //     !token ||
-  //     !this.tokenService.verify(token, body.otp) ||
-  //     token.isExpired
-  //   ) {
-  //     throw new BadRequestException('Invalid or expired token');
-  //   }
-
-  //   return { message: 'OTP Verified Successfully.' };
-  // }
+  
+  async resetPassword(body: ResetPasswordDTO): Promise<User> {
+    const user = await this.userModel.findOne({ email: body.email });
+    if (!user) {
+      throw new BadRequestException('Invalid email');
+    }
+    if (body.password !== body.confirmPassword) {
+      throw new BadRequestException('Password does not match');
+    }
+    const token = await this.tokenService.find(body.email, body.type);
+    if (!token || !this.tokenService.verify(body.otp, token.hash)) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+    user.password = hashedPassword;
+    await user.save();
+    return user
+  }
+   
 }

@@ -21,74 +21,24 @@ export class AuthUserDto {
   accessToken?: string;
 }
 
-export class UserDto {
-  @ApiProperty()
-  id: string;
 
-  // @ApiProperty({ default: 'sami ullah', required: true })
-  // @IsNotEmpty()
-  // @IsString()
-  // username: string;
 
-  // @ApiProperty({ default: 'password', required: true })
-  // @IsNotEmpty()
-  // @IsString()
-  // password: string;
-
-  // @ApiProperty({ default: 'sami@email.com' })
-  // @IsNotEmpty()
-  // @IsEmail()
-  // @Transform((o) => o.value.toLowerCase().trim())
-  // email: string;
-
-  // @ApiProperty({ default: 'sami@email.com' })
-  // role: Role;
-
-  // @ApiProperty({ default: 'sami@email.com' })
-  // createdAt: Date;
-
-  // @ApiProperty({ default: 'sami@email.com' })
-  // updatedAt: Date;
-
-  // @ApiProperty({ default: 'sami@email.com' })
-  // isEmailVerified: boolean;
-
-  // @ApiProperty({ default: 'sami@email.com' })
-  // __v: number;
-}
-export class CreateUserDto {
-  @ApiProperty({ default: 'sami ullah', required: true })
-  @IsNotEmpty()
-  @IsString()
-  username: string;
-
-  @ApiProperty({ default: 'password', required: true })
-  @IsNotEmpty()
-  @IsString()
-  password: string;
-
-  @ApiProperty({ default: 'sami@email.com' })
-  @IsNotEmpty()
-  @IsEmail()
-  @Transform((o) => o.value.toLowerCase().trim())
-  email: string;
-}
 
 export class SignInDto {
-  @ApiProperty({ default: 'sami@email.com' })
+  @ApiProperty({ default: 'admin@example.com' })
   @IsNotEmpty()
   @IsEmail()
   @Transform((o) => o.value.toLowerCase().trim())
   email: string;
 
-  @ApiProperty({ default: 'password', required: true })
+  @ApiProperty({ default: 'Admin@123', required: true })
   @IsNotEmpty()
   @IsString()
   password: string;
 }
 
 export class ForgotPasswordDTO {
-  @ApiProperty({ default: 'sami@email.com' })
+  @ApiProperty({ default: 'admin@example.com' })
   @IsNotEmpty()
   @IsEmail()
   @Transform((o) => o.value.toLowerCase().trim())
@@ -100,11 +50,39 @@ export class ForgotPasswordDTO {
   type: TokenType;
 }
 
-export class VerifyOtpDTO {
-  @ApiProperty({ default: 'sami@email.com' })
+export class ResetPasswordDTO {
+  @ApiProperty({ default: 'admin@example.com' })
   @IsNotEmpty()
   @IsEmail()
   @Transform((o) => o.value.toLowerCase().trim())
+  email: string;
+
+  @ApiProperty({ default: 535443 })
+  @IsNotEmpty()
+  @IsString()
+  otp: string;
+
+  @ApiProperty({ default: 'Admin@123', required: true })
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+
+  @ApiProperty({ default: 'Admin@123', required: true })
+  @IsNotEmpty()
+  @IsString()
+ confirmPassword: string;
+ 
+ @ApiProperty({ default: TokenType.FORGOT_PASSWORD, required: true })
+ @IsNotEmpty()
+ @IsString()
+ type: TokenType;
+ 
+}
+
+export class VerifyOtpDTO {
+  @ApiProperty({ default: 'admin@example.com' })
+  @IsNotEmpty()
+  @IsEmail()
   email?: string;
 
   @ApiProperty({ default: TokenType.FORGOT_PASSWORD, required: true })
