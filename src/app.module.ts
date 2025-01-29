@@ -12,6 +12,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { SeedService } from './seeder/seeder.service';
 import { InquiryModule } from './inquiry/inquiry.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ReviewModule } from './review/review.module';
+import { SkillsModule } from './skills/skills.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { ProjectsModule } from './projects/projects.module';
     ImageKitModule,
     InquiryModule,
     ProjectsModule,
+    ReviewModule,
+    SkillsModule,
   ],
   controllers: [AppController],
   providers: [
