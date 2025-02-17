@@ -14,6 +14,7 @@ import { InquiryModule } from './inquiry/inquiry.module';
 import { ProjectsModule } from './projects/projects.module';
 import { ReviewModule } from './review/review.module';
 import { SkillsModule } from './skills/skills.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { SkillsModule } from './skills/skills.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('DATABASE_URL'),
+        uri: configService.get<string>('MONGO_URI'),
       }),
       inject: [ConfigService],
     }),
@@ -38,6 +39,7 @@ import { SkillsModule } from './skills/skills.module';
     ProjectsModule,
     ReviewModule,
     SkillsModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [

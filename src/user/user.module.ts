@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { User, UserSchema } from './user.mongo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TokenModule } from 'src/token/token.module';
+import { MailerModule } from 'src/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TokenModule } from 'src/token/token.module';
       }),
     }),
     TokenModule,
+    MailerModule
   ],
   controllers: [UserController],
   providers: [UserService],

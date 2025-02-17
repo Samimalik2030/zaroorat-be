@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Req, Patch } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import {
@@ -12,16 +12,19 @@ import {
 import { User } from './user.mongo';
 import { TokenService } from 'src/token/token.service';
 import { JwtGuard } from 'src/guards/Guard';
+import { MailerService } from 'src/mailer/service/mailer.service';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 
 @Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
+    private readonly mailerService:MailerService,
+
   ) {}
 
-
-  
   @Post('sign-in')
   @ApiResponse({
     status: 201,
@@ -29,6 +32,7 @@ export class UserController {
     description: 'User signed in successfully.',
   })
   async SignIn(@Body() body: SignInDto): Promise<AuthUserDto> {
+    console.log(body);
     const user = await this.userService.signIn(body);
     return user;
   }
@@ -36,8 +40,10 @@ export class UserController {
   @Post('forgot-password')
   async forgotPassword(@Body() body: ForgotPasswordDTO): Promise<string> {
     const otp = await this.tokenService.generate(body.email, body.type);
+    await this.mailerService.sendMail('', 'Reset Password', `Please use this ${otp} to verify.`);
     return `Please use this ${otp} to verify.`;
   }
+
 
   @Post('verify-otp')
   @ApiResponse({
@@ -60,5 +66,21 @@ export class UserController {
   async resetPassword(@Body() body: ResetPasswordDTO): Promise<User> {
     const user = await this.userService.resetPassword(body);
     return user;
+  }
+
+
+  @Get('auth-user')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async authUser(@Body() body: SignInDto,@Req() req:Request): Promise<User> {
+    return await this.userService.first({email:req.user.email});
+  }
+
+
+  @Patch('update-profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async updateProfile(@Body() body: Partial<User>,@Req() req:Request): Promise<User> {
+    return await this.userService.updateProfile(req.user._id,body);
   }
 }

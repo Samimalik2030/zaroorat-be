@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticatedRequest } from 'src/interfaces/request.interface';
+import { User } from 'src/user/user.mongo';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -52,5 +53,12 @@ export class JwtAuthGuard implements CanActivate {
       }
     }
     return undefined;
+  }
+}
+declare global {
+  namespace Express {
+    export interface Request {
+      user: User;
+    }
   }
 }

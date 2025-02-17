@@ -5,10 +5,7 @@ import { User } from './user.mongo';
 
 export enum Role {
   ADMIN = 'admin',
-  HARVESTING_MANAGER = 'harvesting_manager',
-  FARM_WAREHOUSE_MANAGER = 'farm_warehouse_manager',
-  CITY_WAREHOUSE_MANAGER = 'city_warehouse_manager',
-  BRANCH_MANAGER = 'branch_manager',
+ 
 }
 
 export enum TokenType {
@@ -16,10 +13,15 @@ export enum TokenType {
   FORGOT_PASSWORD = 'Forgot Password',
 }
 
+
 export class AuthUserDto {
+  @ApiProperty({ type: () => User }) 
   user: User;
+
+  @ApiProperty({ type: String })
   accessToken?: string;
 }
+
 
 
 
@@ -95,3 +97,5 @@ export class VerifyOtpDTO {
   @IsString()
   otp: string;
 }
+
+
