@@ -6,23 +6,24 @@ export class MailerService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
+    // Load configuration from environment variables
     this.transporter = nodemailer.createTransport({
-      host: 'live.smtp.mailtrap.io',
-      port: 587,
-      secure: false,
+      host: process.env.MAIL_HOST, // SMTP host
+      port: parseInt(process.env.MAIL_PORT, 10), // SMTP port
+      secure: false, // Use TLS (false because Mailtrap doesn't require secure connection)
       auth: {
-        user: 'smtp@mailtrap.io',
-        pass: '291eef8da560cd2d303ab9c45729d5a6', 
+        user: process.env.MAIL_USERNAME, // Mailtrap username
+        pass: process.env.MAIL_PASSWORD, // Mailtrap password
       },
     });
   }
 
   async sendMail(to: string, subject: string, text: string, html?: string) {
     const mailOptions = {
-      from: 'demomailtrap.com',
-      to, 
-      subject, 
-      text, 
+      from: 'msamiullah2030@gmail.com',
+      to,
+      subject,
+      text,
       html,
     };
 

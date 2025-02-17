@@ -5,7 +5,6 @@ import { User } from './user.mongo';
 
 export enum Role {
   ADMIN = 'admin',
- 
 }
 
 export enum TokenType {
@@ -13,18 +12,13 @@ export enum TokenType {
   FORGOT_PASSWORD = 'Forgot Password',
 }
 
-
 export class AuthUserDto {
-  @ApiProperty({ type: () => User }) 
+  @ApiProperty({ type: () => User })
   user: User;
 
   @ApiProperty({ type: String })
   accessToken?: string;
 }
-
-
-
-
 
 export class SignInDto {
   @ApiProperty({ default: 'admin@example.com' })
@@ -72,13 +66,7 @@ export class ResetPasswordDTO {
   @ApiProperty({ default: 'Admin@123', required: true })
   @IsNotEmpty()
   @IsString()
- confirmPassword: string;
- 
- @ApiProperty({ default: TokenType.FORGOT_PASSWORD, required: true })
- @IsNotEmpty()
- @IsString()
- type: TokenType;
- 
+  confirmPassword: string;
 }
 
 export class VerifyOtpDTO {
@@ -97,5 +85,3 @@ export class VerifyOtpDTO {
   @IsString()
   otp: string;
 }
-
-

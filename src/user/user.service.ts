@@ -14,9 +14,11 @@ import {
   AuthUserDto,
   ResetPasswordDTO,
   SignInDto,
+  TokenType,
   VerifyOtpDTO,
 } from './user.dto';
 import { TokenService } from 'src/token/token.service';
+import { MessageDto } from 'src/common/message.dto';
 
 @Injectable()
 export class UserService {
@@ -47,7 +49,7 @@ export class UserService {
     if (!validPassword) {
       throw new UnauthorizedException('Invalid email or password');
     }
-console.log('sami')
+
     const accessToken = await this.jwtService.signAsync({
       sub: user._id,
       email: user.email,
@@ -60,16 +62,15 @@ console.log('sami')
     };
   }
 
-  async verifyOtp(@Body() body: VerifyOtpDTO): Promise<any> {
+  async verifyOtp(@Body() body: VerifyOtpDTO): Promise<MessageDto> {
     const token = await this.tokenService.find(body.email, body.type);
-    if (
-      !token ||
-      !this.tokenService.verify(body.otp, body.otp) ||
-      token.isExpired
-    ) {
+    if (!token) {
       throw new BadRequestException('Invalid or expired token');
     }
-
+    const verifiedToken = await this.tokenService.verify(body.otp, token.hash);
+    if (!verifiedToken || token.isExpired) {
+      throw new BadRequestException('Invalid OTP');
+    }
     return { message: 'OTP Verified Successfully.' };
   }
 
@@ -78,26 +79,37 @@ console.log('sami')
     if (!user) {
       throw new BadRequestException('Invalid email');
     }
+    const verifiedToken = await this.verifyOtp({
+      otp: body.otp,
+      email: body.email,
+      type: TokenType.FORGOT_PASSWORD,
+    });
+    if (verifiedToken) {
+      await this.tokenService.findByEmailAndDelete(
+        body.email,
+        TokenType.FORGOT_PASSWORD,
+      );
+    }
     if (body.password !== body.confirmPassword) {
       throw new BadRequestException('Password does not match');
     }
-    const token = await this.tokenService.find(body.email, body.type);
-    if (!token || !this.tokenService.verify(body.otp, token.hash)) {
-      throw new BadRequestException('Invalid or expired token');
-    }
+
     const hashedPassword = await bcrypt.hash(body.password, 10);
-    user.password = hashedPassword;
-    await user.save();
-    return user;
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { email: body.email },
+      { password: hashedPassword },
+      { returnDocument: 'after' },
+    );
+    return updatedUser;
   }
 
-
-
-  async updateProfile(id:Types.ObjectId,data: Partial<User>): Promise<User> {
-    const user = await this.userModel.findByIdAndUpdate(id,data, { returnDocument:"after"});
+  async updateProfile(id: Types.ObjectId, data: Partial<User>): Promise<User> {
+    const user = await this.userModel.findByIdAndUpdate(id, data, {
+      returnDocument: 'after',
+    });
     if (!user) {
       throw new BadRequestException('Invalid email');
     }
-   return user;
+    return user;
   }
 }

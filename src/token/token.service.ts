@@ -33,7 +33,6 @@ export class TokenService {
       .toString()
       .padEnd(6, Math.ceil(Math.random() * 9).toString());
     const bcryptedToken = await bcrypt.hash(otp, 9);
-    await this.findByEmailAndDelete(email, tokenType);
     await this.create(email, bcryptedToken, tokenType);
     return otp;
   }
@@ -43,17 +42,16 @@ export class TokenService {
     hashedOTP: string,
     type: TokenType,
   ): Promise<Token> {
-    const otp = await this.tokenModel.create({
+    return await this.tokenModel.create({
       email: email,
       type: type,
       hash: hashedOTP,
       expiry: new Date(Date.now() + 60 * 60 * 1000),
     });
-
-    return await otp.save();
   }
 
   async verify(otp: string, hash: string): Promise<boolean> {
-    return await bcrypt.compareSync(hash, otp);
+    const bcryptToken = bcrypt.compareSync(otp, hash);
+    return bcryptToken;
   }
 }
