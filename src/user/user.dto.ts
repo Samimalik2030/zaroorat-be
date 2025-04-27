@@ -4,7 +4,8 @@ import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { User } from './user.mongo';
 
 export enum Role {
-  ADMIN = 'admin',
+  ADMIN = 'Admin',
+  CUSTOMER = 'Customer'
 }
 
 export enum TokenType {
@@ -31,6 +32,25 @@ export class SignInDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+}
+
+export class SignUpDto {
+  @ApiProperty({ default: 'admin@example.com' })
+  @IsNotEmpty()
+  @IsEmail()
+  @Transform((o) => o.value.toLowerCase().trim())
+  email: string;
+
+  @ApiProperty({ default: 'Admin@123', required: true })
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+
+
+  @ApiProperty({required: true })
+  @IsNotEmpty()
+  @IsString()
+  fullName: string;
 }
 
 export class ForgotPasswordDTO {

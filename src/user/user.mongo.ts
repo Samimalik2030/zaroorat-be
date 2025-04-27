@@ -23,7 +23,7 @@ export class User {
     example: 'john_doe',
   })
   @Prop()
-  username: string;
+  fullName: string;
 
   @ApiProperty({
     description: 'Email address of the user',

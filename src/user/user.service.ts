@@ -6,14 +6,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Mongoose, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './user.mongo';
 import {
   AuthUserDto,
   ResetPasswordDTO,
+  Role,
   SignInDto,
+  SignUpDto,
   TokenType,
   VerifyOtpDTO,
 } from './user.dto';
@@ -39,6 +41,32 @@ export class UserService {
     });
   }
 
+  async signUp(data: SignUpDto): Promise<AuthUserDto> {
+    const user = await this.userModel.findOne({ email: data.email });
+    if (user) {
+      throw new UnauthorizedException('User already exists');
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const createdUser = await this.userModel.create({
+      ...data,
+      password: hashedPassword,
+      role:Role.CUSTOMER
+    });
+
+    const accessToken = await this.jwtService.signAsync({
+      sub: createdUser._id,
+      email: createdUser.email,
+      name: createdUser.fullName,
+    });
+
+    return {
+      user: createdUser,
+
+      accessToken,
+    };
+  }
+
   async signIn(body: SignInDto): Promise<AuthUserDto> {
     const user = await this.userModel.findOne({ email: body.email });
     if (!user) {
@@ -53,7 +81,7 @@ export class UserService {
     const accessToken = await this.jwtService.signAsync({
       sub: user._id,
       email: user.email,
-      name: user.username,
+      name: user.fullName,
     });
 
     return {

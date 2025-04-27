@@ -14,6 +14,7 @@ import {
   ForgotPasswordDTO,
   ResetPasswordDTO,
   SignInDto,
+  SignUpDto,
   TokenType,
   VerifyOtpDTO,
 } from './user.dto';
@@ -25,7 +26,7 @@ import { Request } from 'express';
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 import { MessageDto } from 'src/common/message.dto';
 
-@Controller('users')
+@Controller('auth')
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -42,6 +43,17 @@ export class UserController {
   async SignIn(@Body() body: SignInDto): Promise<AuthUserDto> {
     console.log(body);
     const user = await this.userService.signIn(body);
+    return user;
+  }
+
+  @Post('sign-up')
+  @ApiResponse({
+    status: 201,
+    type: AuthUserDto,
+    description: 'User signed in successfully.',
+  })
+  async SignUp(@Body() body: SignUpDto): Promise<AuthUserDto> {
+    const user = await this.userService.signUp(body);
     return user;
   }
 

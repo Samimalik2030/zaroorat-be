@@ -2,12 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { JwtAuthGuard } from './guards/jwtAuthGuard';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: '*', // Replace with your frontend URL if needed
+    origin: '*',
     allowedHeaders: ['Authorization', 'Content-Type'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
@@ -20,7 +20,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Social Media')
+    .setTitle('Marble Store')
     .setDescription('')
     .setVersion('1.0')
     .addBearerAuth()

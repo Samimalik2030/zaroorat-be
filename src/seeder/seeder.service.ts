@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -30,7 +31,8 @@ export class SeedService implements OnApplicationBootstrap {
       await this.usersService.seedAdmin({
         email: adminEmail,
         password: adminPassword,
-        username: 'admin',
+        fullName: 'admin',
+        role:Role.ADMIN
       });
 
       this.logger.log('Admin user created successfully.');

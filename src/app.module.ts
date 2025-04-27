@@ -11,10 +11,16 @@ import { ImageKitModule } from './image-kit/image-kit.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SeedService } from './seeder/seeder.service';
 import { InquiryModule } from './inquiry/inquiry.module';
-import { ProjectsModule } from './projects/projects.module';
+
 import { ReviewModule } from './review/review.module';
-import { SkillsModule } from './skills/skills.module';
 import { MailerModule } from './mailer/mailer.module';
+import { ProductsModule } from './products/products.module';
+import { CartModule } from './cart/cart.module';
+import { OrderModule } from './order/order.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { WishlistModule } from './wishlist/wishlist.module';
+import { ImageModule } from './image/image.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -36,10 +42,15 @@ import { MailerModule } from './mailer/mailer.module';
     TokenModule,
     ImageKitModule,
     InquiryModule,
-    ProjectsModule,
     ReviewModule,
-    SkillsModule,
     MailerModule,
+    ProductsModule,
+    CartModule,
+    OrderModule,
+    AnalyticsModule,
+    WishlistModule,
+    ImageModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [

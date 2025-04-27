@@ -6,14 +6,14 @@ export class MailerService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
-    // Load configuration from environment variables
+   
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST, // SMTP host
-      port: parseInt(process.env.MAIL_PORT, 10), // SMTP port
-      secure: false, // Use TLS (false because Mailtrap doesn't require secure connection)
+      host: process.env.MAIL_HOST,
+      port: parseInt(process.env.MAIL_PORT, 10), 
+      secure: false,
       auth: {
-        user: process.env.MAIL_USERNAME, // Mailtrap username
-        pass: process.env.MAIL_PASSWORD, // Mailtrap password
+        user: process.env.MAIL_USERNAME, 
+        pass: process.env.MAIL_PASSWORD,
       },
     });
   }
