@@ -21,10 +21,11 @@ export class CartController {
   @ApiOperation({ summary: 'Add item to cart' })
   @ApiResponse({ status: 201, description: 'Item added to cart' })
   create(@Body() createCartDto: CreateCartDto) {
+    console.log(createCartDto,'create caerd')
     return this.cartService.addToCart(createCartDto);
   }
 
-  @Get('user/:userId')
+  @Get(':userId')
   @ApiOperation({ summary: 'Get cart items for a user' })
   @ApiResponse({ status: 200, description: 'User cart retrieved' })
   findByUser(@Param('userId') userId: string) {
