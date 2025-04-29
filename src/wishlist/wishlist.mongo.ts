@@ -9,7 +9,7 @@ import { User } from 'src/user/user.mongo';
 import { transformObjectId } from 'src/common/transform-to-obj';
 
 @MongoSchema()
-export class Wishlist extends BaseSchema {
+export class Wishlist  {
   @Transform(transformObjectId)
   @Prop({ type: Schema.Types.ObjectId, ref: 'User', required: true })
   @ApiProperty({ type: User })

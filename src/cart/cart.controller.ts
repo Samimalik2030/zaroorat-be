@@ -31,7 +31,13 @@ export class CartController {
   findByUser(@Param('userId') userId: string) {
     return this.cartService.getCartByUser(userId);
   }
-
+  @Get('/summary/:userId')
+  @ApiOperation({ summary: 'Get order summary for a user' })
+  @ApiResponse({ status: 200, description: 'Order summary retrieved successfully' })
+  findOrderSummary(@Param('userId') userId: string) {
+    return this.cartService.getTotalSales(userId);
+  }
+  
   @Get(':id')
   @ApiOperation({ summary: 'Get a single cart item by ID' })
   @ApiResponse({ status: 200, description: 'Cart item retrieved' })

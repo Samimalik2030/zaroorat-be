@@ -15,7 +15,7 @@ export class WishlistService {
     @InjectModel(Wishlist.name) private wishlistModel: Model<Wishlist>,
   ) {}
 
-  async addToWishlist(userId: string, productId: string): Promise<Wishlist> {
+  async addToWishlist(userId: string, productId: string): Promise<any> {
     const existingWishlist = await this.wishlistModel.findOne({
       user: userId,
       product: productId,
@@ -25,21 +25,20 @@ export class WishlistService {
       throw new ConflictException('Product is already in your wishlist');
     }
 
-    const newWishlist = new this.wishlistModel({
-      user: userId,
+    const createdWishlist = await this.wishlistModel.create({
       product: productId,
+      user: userId,
     });
-
-    return await newWishlist.save();
+    return {
+      message: 'Product added to wishlist',
+      wishlist: createdWishlist,
+    };
   }
 
   async getWishlist(userId: string): Promise<Wishlist[]> {
-    const wishlists = await this.wishlistModel
-      .find({ user: userId })
-      .populate('product');
-    if (!wishlists || wishlists.length === 0) {
-      throw new NotFoundException('No wishlist items found for this user');
-    }
+    console.log(userId);
+    const wishlists = await this.wishlistModel.find().populate('product').exec();
+
     return wishlists;
   }
 
