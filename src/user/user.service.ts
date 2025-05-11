@@ -92,9 +92,11 @@ export class UserService {
 
   async verifyOtp(@Body() body: VerifyOtpDTO): Promise<MessageDto> {
     const token = await this.tokenService.find(body.email, body.type);
+    console.log(token,'found token')
     if (!token) {
       throw new BadRequestException('Invalid or expired token');
     }
+
     const verifiedToken = await this.tokenService.verify(body.otp, token.hash);
     if (!verifiedToken || token.isExpired) {
       throw new BadRequestException('Invalid OTP');

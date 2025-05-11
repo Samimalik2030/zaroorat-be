@@ -28,30 +28,30 @@ export class TokenService {
     return otp;
   }
 
-  async generate(email: string, tokenType: TokenType): Promise<string> {
-    const otp = await Math.floor(Math.random() * 1000000)
-      .toString()
-      .padEnd(6, Math.ceil(Math.random() * 9).toString());
-    const bcryptedToken = await bcrypt.hash(otp, 9);
-    await this.create(email, bcryptedToken, tokenType);
-    return otp;
-  }
+async generate(email: string, tokenType: TokenType): Promise<string> {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const bcryptedToken = await bcrypt.hash(otp, 9);
+   await this.create(email, bcryptedToken, tokenType);
+  return otp;
+}
 
   async create(
     email: string,
     hashedOTP: string,
     type: TokenType,
   ): Promise<Token> {
-    return await this.tokenModel.create({
+ const token =  await this.tokenModel.create({
       email: email,
       type: type,
       hash: hashedOTP,
       expiry: new Date(Date.now() + 60 * 60 * 1000),
     });
+    return token
   }
 
-  async verify(otp: string, hash: string): Promise<boolean> {
-    const bcryptToken = bcrypt.compareSync(otp, hash);
-    return bcryptToken;
-  }
+async verify(otp: string, hash: string): Promise<boolean> {
+  console.log(otp,hash)
+  return await bcrypt.compare(otp, hash);
+}
+
 }

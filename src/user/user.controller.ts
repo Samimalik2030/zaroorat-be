@@ -6,6 +6,7 @@ import {
   Get,
   Req,
   Patch,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
@@ -59,6 +60,13 @@ export class UserController {
 
   @Post('forgot-password')
   async forgotPassword(@Body() body: ForgotPasswordDTO): Promise<MessageDto> {
+    const user = await this.userService.first({
+      email: body.email,
+    });
+    if(!user){
+      throw new NotFoundException(`No linked account found with this email ${body.email}`)
+    }
+   
     const otp = await this.tokenService.generate(body.email, body.type);
     await this.mailerService.sendMail(
       body.email,
