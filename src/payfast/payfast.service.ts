@@ -20,7 +20,7 @@ export class PayfastService {
     order_date: string;
     signature: string;
   }> {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams();   
 
     params.append('MERCHANT_ID', '102');
     params.append('SECURED_KEY', this.securedKey);
