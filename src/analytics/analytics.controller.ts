@@ -9,26 +9,12 @@ import { Analytics } from './analytics.mongo';
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
-  // Endpoint for Total Sales Analytics
-  // @Get('total-sales')
-  // @ApiOperation({ summary: 'Get total sales for a specific period' })
-  // @ApiQuery({ name: 'period', description: 'Period (e.g., 2025-04)', required: true })
-  // @ApiQuery({ name: 'granularity', description: 'Granularity of the data (e.g., monthly, yearly)', required: true, enum: ['monthly', 'yearly'] })
-  // @ApiResponse({ status: 200, description: 'Total sales data', type: Analytics })
-  // async getTotalSales(
-  //   @Query('period') period: string,
-  //   @Query('granularity') granularity: string
-  // ): Promise<Analytics> {
-  //   const result = await this.analyticsService.calculateTotalSales(period);
-  //   return this.analyticsService.saveOrUpdateAnalytics(
-  //     'totalSales',
-  //     result.value,
-  //     period,
-  //     granularity,
-  //     'sales',
-  //     result.additionalData || {}
-  //   );
-  // }
+ 
+  @Get('summary')
+  async getTotalSales(
+  ): Promise<any> {
+    return await this.analyticsService.calculateData()
+  }
 
   // Endpoint for Total Orders Analytics
   // @Get('total-orders')

@@ -6,9 +6,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Product } from '../schema/product.mongo';
-import { CreateProductDto } from '../dto/create-product.dto';
+import { CalculatorDto, CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ImageKitService } from 'src/image-kit/image-kit.service';
+import { CalculateAmountDto } from '../dto/CalculateAmountDto';
 
 @Injectable()
 export class ProductService {
@@ -18,34 +19,46 @@ export class ProductService {
   ) {}
 
   async create(data: CreateProductDto): Promise<Product> {
-    const product = await this.productModel.create(data);
+    console.log(data, 'product');
+    const product = await this.productModel.create({
+      ...data,
+      dimensions: {
+        length: data.length,
+        width: data.width,
+      },
+    });
     console.log(product);
     return product;
   }
 
-  async findAll(filters: { finish?: string; origin?: string; price?: string; category?: string; limit?: string }): Promise<Product[]> {
-    const { finish, origin, price, category, limit } = filters;
+  async find() {
+    return await this.productModel.find();
+  }
 
-    // Build the filter object dynamically
+  async findAll(filters: {
+    finish?: string;
+    origin?: string;
+    price?: string;
+    category?: string;
+    limit?: string;
+  }): Promise<Product[]> {
+    const { finish, price, category, limit } = filters;
+
     const query: any = {};
 
     if (finish) {
       query.finish = finish;
     }
-    if (origin) {
-      query.origin = origin;
-    }
+
     if (price) {
-      query.price = { $lte: parseFloat(price) };  // Assuming you're filtering by max price
+      query.price = { $lte: parseFloat(price) };
     }
     if (category) {
       query.category = category;
     }
 
-    // Set the limit (defaults to 10 if not provided)
     const maxLimit = limit ? parseInt(limit, 10) : 10;
 
-    // Fetch and return the filtered products with the limit applied
     return this.productModel.find(query).limit(maxLimit).exec();
   }
 
@@ -62,17 +75,20 @@ export class ProductService {
     return product;
   }
 
-  async update(
-    id: string,
-    updateProductDto: UpdateProductDto,
-  ): Promise<Product> {
+  async update(id: string, data: UpdateProductDto): Promise<Product> {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Invalid product ID');
     }
 
     const updatedProduct = await this.productModel.findByIdAndUpdate(
       id,
-      updateProductDto,
+      {
+        ...data,
+        dimensions: {
+          length: data.length,
+          width: data.width,
+        },
+      },
       { returnDocument: 'after' },
     );
 
@@ -143,5 +159,44 @@ export class ProductService {
     }
 
     return products;
+  }
+
+  async calculteAmount(data: CalculateAmountDto) {
+    const product = await this.productModel.findById(data.productId);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const amountOfProduct = product.price;
+    const finalAmount = amountOfProduct * data.count;
+    return finalAmount;
+  }
+
+  async getEstimateCost(data: CalculatorDto) {
+    const product = await this.productModel.findById(data.id);
+
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    const { length: productLength, width: productWidth } = product.dimensions;
+
+    const areaOfSingleProduct = productLength * productWidth;
+    const roomLengthInInches = data.length * 12;
+    const roomWidthInInches = data.width * 12;
+    const coveredArea = roomLengthInInches * roomWidthInInches;
+    const estimatedProducts = Math.ceil(coveredArea / areaOfSingleProduct);
+    console.log(estimatedProducts, 'estimated products');
+    console.log(product.price, ' products price');
+
+    const estimatedPrice = estimatedProducts * product.price;
+
+    return {
+      estimatedPrice,
+      estimatedProducts,
+      area: coveredArea,
+      productArea: areaOfSingleProduct,
+      products: estimatedProducts,
+    };
   }
 }

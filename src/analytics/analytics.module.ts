@@ -4,6 +4,8 @@ import { AnalyticsController } from './analytics.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Analytics, AnalyticsSchema } from './analytics.mongo';
 import { OrderModule } from 'src/order/order.module';
+import { ProductsModule } from 'src/products/products.module';
+import { ProjectModule } from 'src/project/project.module';
 
 @Module({
   imports: [
@@ -13,7 +15,9 @@ import { OrderModule } from 'src/order/order.module';
         schema: AnalyticsSchema,
       },
     ]),
-    OrderModule
+    OrderModule,
+    ProductsModule,
+    ProjectModule
   ],
   providers: [AnalyticsService],
   controllers: [AnalyticsController],

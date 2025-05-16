@@ -8,17 +8,31 @@ import { Model } from 'mongoose';
 
 import { User } from 'src/user/user.mongo';
 import { Wishlist } from './wishlist.mongo';
+import { UserService } from 'src/user/user.service';
+import { CreateWishlistDto } from './wishlist.dto';
+import { ProductService } from 'src/products/service/products.service';
 
 @Injectable()
 export class WishlistService {
   constructor(
     @InjectModel(Wishlist.name) private wishlistModel: Model<Wishlist>,
+    private readonly UserService: UserService,
+    private readonly ProductService: ProductService,
   ) {}
 
-  async addToWishlist(userId: string, productId: string): Promise<any> {
+  async addToWishlist(data: CreateWishlistDto): Promise<any> {
+    const product = await this.ProductService.findOne(data.productId);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const user = await this.UserService.findById(data.userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const existingWishlist = await this.wishlistModel.findOne({
-      user: userId,
-      product: productId,
+      user: user,
+      product: product,
     });
 
     if (existingWishlist) {
@@ -26,8 +40,8 @@ export class WishlistService {
     }
 
     const createdWishlist = await this.wishlistModel.create({
-      product: productId,
-      user: userId,
+      product: product,
+      user: user,
     });
     return {
       message: 'Product added to wishlist',
@@ -35,9 +49,16 @@ export class WishlistService {
     };
   }
 
-  async getWishlist(userId: string): Promise<Wishlist[]> {
-    console.log(userId);
-    const wishlists = await this.wishlistModel.find().populate('product').exec();
+  async getWishlist(userId: any): Promise<Wishlist[]> {
+    console.log(userId, 'user id');
+    const user = await this.UserService.first({
+      _id: userId,
+    });
+    console.log(user, 'user');
+    const wishlists = await this.wishlistModel
+      .find({ user: user._id })
+      .populate('product')
+      .exec();
 
     return wishlists;
   }

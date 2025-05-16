@@ -1,70 +1,89 @@
-// update-product.dto.ts
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsArray, IsBoolean, IsOptional } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsString,
+  IsNumber,
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+class ImageDto {
+  @ApiPropertyOptional({
+    example: 'abc123',
+    description: 'File ID of the uploaded image',
+  })
+  @IsOptional()
+  @IsString()
+  fileId?: string;
+
+  @ApiPropertyOptional({
+    example: 'https://example.com/image.jpg',
+    description: 'URL of the uploaded image',
+  })
+  @IsOptional()
+  @IsString()
+  url?: string;
+}
 
 export class UpdateProductDto {
-  @ApiProperty({ example: 'Carrara White Marble' })
+  @ApiPropertyOptional({ example: 'Carrara White Marble' })
   @IsOptional()
   @IsString()
   name?: string;
 
-  @ApiProperty({ example: 25, description: 'Price per sq.ft or per slab' })
+  @ApiPropertyOptional({
+    example: 25,
+    description: 'Price per sq.ft or per slab',
+  })
   @IsOptional()
   @IsNumber()
   price?: number;
 
-  @ApiProperty({ example: 'Elegant white marble with grey veins.' })
+  @ApiPropertyOptional({ example: 25 })
+  @IsOptional()
+  @IsNumber()
+  length?: number;
+
+  @ApiPropertyOptional({ example: 25 })
+  @IsOptional()
+  @IsNumber()
+  width?: number;
+
+  @ApiPropertyOptional({ example: 'Elegant white marble with grey veins.' })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiProperty({ example: '60x30 inches' })
+  @ApiPropertyOptional({ example: 2 })
   @IsOptional()
-  @IsString()
-  dimensions?: string;
+  @IsNumber()
+  thickness?: number;
 
-  @ApiProperty({ example: '2 cm' })
-  @IsOptional()
-  @IsString()
-  thickness?: string;
-
-  @ApiProperty({ example: 'Polished' })
+  @ApiPropertyOptional({ example: 'Polished' })
   @IsOptional()
   @IsString()
   finish?: string;
 
-  @ApiProperty({ example: 'White Marble' })
+  @ApiPropertyOptional({ example: 'White Marble' })
   @IsOptional()
   @IsString()
   category?: string;
 
-  @ApiProperty({ example: ['https://example.com/image1.jpg'], type: [String] })
-  @IsOptional()
-  @IsArray()
-  images?: string[];
-
-  @ApiProperty({ example: true })
+  @ApiPropertyOptional({ example: true })
   @IsOptional()
   @IsBoolean()
   inStock?: boolean;
 
-  @ApiProperty({ example: 'White' })
-  @IsOptional()
-  @IsString()
-  color?: string;
-
-  @ApiProperty({ example: 'Italy' })
-  @IsOptional()
-  @IsString()
-  origin?: string;
-
-  @ApiProperty({ example: ['luxury', 'floor', 'classic'], type: [String] })
+  @ApiPropertyOptional({ example: ['luxury', 'floor', 'classic'], type: [String] })
   @IsOptional()
   @IsArray()
   tags?: string[];
 
-  @ApiProperty({ example: 'Marble Masters Co.' })
+  @ApiPropertyOptional({ type: () => ImageDto })
   @IsOptional()
-  @IsString()
-  supplier?: string;
+  @ValidateNested()
+  @Type(() => ImageDto)
+  image?: ImageDto;
 }

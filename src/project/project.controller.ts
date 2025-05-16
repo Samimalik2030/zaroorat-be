@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, Query } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
 import { Project } from './project.mongo';
@@ -7,16 +7,14 @@ import { Project } from './project.mongo';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  // GET all projects
-  @Get()
-  async findAll(): Promise<Project[]> {
-    return await this.projectService.findAll();
-  }
 
-  // GET one project by query parameters (e.g., by title, location)
-  @Get('search')
-  async findOne(@Body() searchData: Partial<Project>): Promise<Project> {
-    return await this.projectService.findOne(searchData);
+  @Get()
+      
+  
+  async findAll(
+    @Query('limit') limit?: string
+  ): Promise<Project[]> {
+    return await this.projectService.findAll(limit);
   }
 
   // POST a new project
@@ -34,7 +32,6 @@ export class ProjectController {
     return await this.projectService.update(id, updateProjectDto);
   }
 
-  // DELETE a project by ID
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<Project> {
     return await this.projectService.delete(id);

@@ -4,11 +4,13 @@ import { Exclude, Transform } from 'class-transformer';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongoSchema } from '../decorator/mongo-schema.decorator';
 import { Role } from './user.dto';
+import { FileDto } from 'src/decorator/file.type';
 
 export type UserDocument = HydratedDocument<User>;
 
 @MongoSchema()
 export class User {
+
   @ApiProperty({
     description: 'Unique identifier of the user',
     type: String,
@@ -16,6 +18,11 @@ export class User {
   })
   @Transform((obj) => obj.value.toString())
   _id: Types.ObjectId;
+
+  
+  @ApiProperty({ type: () => FileDto })
+  @Prop({ type: Object })
+  profileImage: FileDto;
 
   @ApiProperty({
     description: 'Username of the user',

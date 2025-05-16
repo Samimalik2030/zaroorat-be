@@ -7,7 +7,7 @@ import { MongoSchema } from 'src/decorator/mongo-schema.decorator';
 export type InquiryDocument = HydratedDocument<Inquiry>;
 
 @MongoSchema()
-export class Inquiry{
+export class Inquiry {
   @Transform((obj) => obj.value.toString())
   _id: Types.ObjectId;
 
@@ -23,6 +23,17 @@ export class Inquiry{
   @ApiProperty()
   query: string;
 
+  @Prop()
+  @ApiProperty()
+  subject: string;
+
+  @Prop()
+  @ApiProperty()
+  phone: string;
+
+  @Prop()
+  @ApiProperty()
+  type: string;
 
   @Prop({ type: Date })
   @ApiProperty()
@@ -31,7 +42,6 @@ export class Inquiry{
   @Prop({ type: Date })
   @ApiProperty()
   updatedAt: Date;
-
 
   @Exclude()
   __v: number;

@@ -3,6 +3,8 @@ import { WishlistService } from './wishlist.service';
 import { WishlistController } from './wishlist.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Wishlist, WishlistSchema } from './wishlist.mongo';
+import { UserModule } from 'src/user/user.module';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { Wishlist, WishlistSchema } from './wishlist.mongo';
         schema: WishlistSchema,
       },
     ]),
+    UserModule,
+    ProductsModule
   ],
   providers: [WishlistService],
   controllers: [WishlistController],

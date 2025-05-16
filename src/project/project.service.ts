@@ -10,8 +10,13 @@ export class ProjectService {
     @InjectModel(Project.name) private readonly projectModel: Model<Project>,
   ) {}
 
-  async findAll() {
-    return await this.projectModel.find();
+  async findAll(limit?:string) {
+    if(limit){
+    const limitInNumber = Number(limit)
+    return await this.projectModel.find().limit(limitInNumber);
+    }
+    return await this.projectModel.find()
+
   }
 
   async findOne(data: Partial<Project>) {

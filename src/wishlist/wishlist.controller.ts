@@ -6,43 +6,29 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  Body,
 } from '@nestjs/common';
 import { WishlistService } from './wishlist.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Wishlist } from './wishlist.mongo';
+import { CreateCartDto } from 'src/cart/cart.dto';
+import { CreateWishlistDto } from './wishlist.dto';
 
 @ApiTags('wishlist')
 @Controller('wishlists')
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
-
-  @Post(':userId/:productId')
-  @ApiOperation({ summary: 'Add a product to the user wishlist' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
-  @ApiParam({ name: 'productId', description: 'Product ID to add' })
+  @Post('')
   @ApiResponse({
     status: 201,
     description: 'Product added to wishlist',
     type: Wishlist,
   })
-  @ApiResponse({
-    status: 409,
-    description: 'Product is already in the wishlist',
-  })
-  async addToWishlist(
-    @Param('userId') userId: string,
-    @Param('productId') productId: string,
-  ): Promise<Wishlist> {
-    try {
-      return await this.wishlistService.addToWishlist(userId, productId);
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        throw new HttpException(error.message, HttpStatus.CONFLICT);
-      }
-      throw error;
-    }
+  async addToWishlist(@Body() body: CreateWishlistDto): Promise<Wishlist> {
+    console.log(body,'body')
+    return await this.wishlistService.addToWishlist(body);
   }
 
   @Get(':userId')
@@ -52,7 +38,6 @@ export class WishlistController {
   async getWishlist(@Param('userId') userId: string): Promise<Wishlist[]> {
     return this.wishlistService.getWishlist(userId);
   }
-
 
   @Delete(':userId/:productId')
   @ApiOperation({ summary: 'Remove product from user wishlist' })

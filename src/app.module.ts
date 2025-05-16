@@ -21,6 +21,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { ImageModule } from './image/image.module';
 import { ProjectModule } from './project/project.module';
+import { PayfastModule } from './payfast/payfast.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ProjectModule } from './project/project.module';
     WishlistModule,
     ImageModule,
     ProjectModule,
+    PayfastModule,
   ],
   controllers: [AppController],
   providers: [

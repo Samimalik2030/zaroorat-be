@@ -2,13 +2,31 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Analytics } from './analytics.mongo';
+import { ProductService } from 'src/products/service/products.service';
+import { ProjectService } from 'src/project/project.service';
+import { OrderService } from 'src/order/order.service';
 
 @Injectable()
 export class AnalyticsService {
   constructor(
     @InjectModel(Analytics.name) private analyticsModel: Model<Analytics>,
-
+    private readonly ProductService: ProductService,
+    private readonly ProjectsService: ProjectService,
+    private readonly OrderService: OrderService,
   ) {}
+
+  async calculateData() {
+    const products = await this.ProductService.find();
+    const projects = await this.ProjectsService.findAll();
+    const orders = await this.OrderService.findAll();
+    const response = {
+      productCount: products.length,
+      orderCount: orders.length,
+      projectCount: projects.length,
+      totalSales: orders.reduce((acc, curr) => curr.total + acc, 1),
+    };
+    return response
+  }
 
   // Save or update an analytics record
   // async saveOrUpdateAnalytics(
@@ -28,7 +46,7 @@ export class AnalyticsService {
   //   });
 
   //   if (existingAnalytics) {
-   
+
   //     existingAnalytics.value = value;
   //     existingAnalytics.additionalData = additionalData;
   //     await existingAnalytics.save();

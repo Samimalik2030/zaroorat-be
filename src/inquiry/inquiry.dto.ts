@@ -1,18 +1,33 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class CreateInquiryDto {
-@ApiProperty()
-name: string;
+  @ApiProperty()
+  @IsString()
+  username: string;
 
-@ApiProperty()
- email: string;
- 
- @ApiProperty()
-message: string;
+  @ApiProperty()
+  @IsString()
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  query: string;
+
+  @ApiProperty()
+  @IsString()
+  subject: string;
+
+  @ApiProperty()
+  @IsString()
+  phone: string;
+
+  @ApiProperty()
+  @IsString()
+  type: string;
 }
 
-
 export class UpdateInquiryDto {
-     @ApiProperty()
-    message: string;
-    }
+  @ApiProperty()
+  message: string;
+}

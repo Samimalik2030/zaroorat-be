@@ -2,7 +2,7 @@ import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Schema } from 'mongoose';
 import { BaseSchema } from 'src/common/base.schema';
-import { FileDto } from 'src/decorator/file.type';
+import { DimensionsDto, FileDto } from 'src/decorator/file.type';
 import { MongoSchema } from 'src/decorator/mongo-schema.decorator';
 
 @MongoSchema()
@@ -19,13 +19,13 @@ export class Product {
   @Prop()
   description: string;
 
-  @ApiProperty({ example: '60x30 inches' })
-  @Prop()
-  dimensions: string;
+  @ApiProperty({ type: DimensionsDto })
+  @Prop(DimensionsDto)
+  dimensions: DimensionsDto;
 
   @ApiProperty({ example: '2 cm' })
   @Prop()
-  thickness: string;
+  thickness: number;
 
   @ApiProperty({ example: 'Polished' })
   @Prop()
@@ -42,14 +42,6 @@ export class Product {
   @ApiProperty({ example: true })
   @Prop({ default: true })
   inStock: boolean;
-
-  @ApiProperty({ example: 'White' })
-  @Prop()
-  color: string;
-
-  @ApiProperty({ example: 'Italy' })
-  @Prop()
-  origin: string;
 
   @ApiProperty({ example: ['luxury', 'floor', 'classic'], type: [String] })
   @Prop([String])

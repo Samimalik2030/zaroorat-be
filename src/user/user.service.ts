@@ -33,6 +33,10 @@ export class UserService {
   async first(data: Partial<User>): Promise<User> {
     return await this.userModel.findOne(data);
   }
+
+  async findById(id: string) {
+    return await this.userModel.findById(id);
+  }
   async seedAdmin(body: Partial<User>): Promise<User> {
     const hashedPassword = await bcrypt.hash(body.password, 10);
     return await this.userModel.create({
@@ -51,7 +55,7 @@ export class UserService {
     const createdUser = await this.userModel.create({
       ...data,
       password: hashedPassword,
-      role:Role.CUSTOMER
+      role: Role.CUSTOMER,
     });
 
     const accessToken = await this.jwtService.signAsync({
@@ -92,7 +96,7 @@ export class UserService {
 
   async verifyOtp(@Body() body: VerifyOtpDTO): Promise<MessageDto> {
     const token = await this.tokenService.find(body.email, body.type);
-    console.log(token,'found token')
+    console.log(token, 'found token');
     if (!token) {
       throw new BadRequestException('Invalid or expired token');
     }
@@ -133,13 +137,37 @@ export class UserService {
     return updatedUser;
   }
 
-  async updateProfile(id: Types.ObjectId, data: Partial<User>): Promise<User> {
-    const user = await this.userModel.findByIdAndUpdate(id, data, {
-      returnDocument: 'after',
-    });
-    if (!user) {
-      throw new BadRequestException('Invalid email');
+  async updateProfile(id: any, data: Partial<User>): Promise<any> {
+    if (data.password) {
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      const user = await this.userModel.findByIdAndUpdate(
+        id,
+        {
+          ...data,
+          password: hashedPassword,
+        },
+        {
+          returnDocument: 'after',
+        },
+      );
+      return {
+        message: 'Profile Updated',
+        user,
+      };
     }
-    return user;
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      {
+        data,
+      },
+      {
+        returnDocument: 'after',
+      },
+    );
+    return {
+      message: 'Profile Updated',
+      user,
+    };
+
   }
 }

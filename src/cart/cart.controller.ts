@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 
@@ -45,7 +46,7 @@ export class CartController {
     return this.cartService.getCartItem(id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update a cart item' })
   @ApiResponse({ status: 200, description: 'Cart item updated' })
   update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {

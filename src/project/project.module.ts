@@ -10,6 +10,7 @@ import { Project, ProjectSchema } from './project.mongo';
     schema:ProjectSchema
   }])],
   providers: [ProjectService],
-  controllers: [ProjectController]
+  controllers: [ProjectController],
+  exports:[ProjectService]
 })
 export class ProjectModule {}

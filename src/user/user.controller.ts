@@ -7,6 +7,7 @@ import {
   Req,
   Patch,
   NotFoundException,
+  Param,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
@@ -105,14 +106,12 @@ export class UserController {
   async authUser(@Body() body: SignInDto, @Req() req: Request): Promise<User> {
     return await this.userService.first({ email: req.user.email });
   }
+@Patch('update-profile/:id')
+async updateProfile(
+  @Param('id') id: string,
+  @Body() body: Partial<User>
+): Promise<User> {
+  return this.userService.updateProfile(id, body);
+}
 
-  @Patch('update-profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  async updateProfile(
-    @Body() body: Partial<User>,
-    @Req() req: Request,
-  ): Promise<User> {
-    return await this.userService.updateProfile(req.user._id, body);
-  }
 }

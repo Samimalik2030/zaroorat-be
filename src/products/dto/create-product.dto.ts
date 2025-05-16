@@ -9,6 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { DimensionsDto } from 'src/decorator/file.type';
 
 class ImageDto {
   @ApiProperty({
@@ -37,20 +38,29 @@ export class CreateProductDto {
   })
   @IsNumber()
   price: number;
-  
+
+  @ApiProperty({
+    example: 25,
+    description: 'Price per sq.ft or per slab',
+  })
+  @IsNumber()
+  length: number;
+
+  @ApiProperty({
+    example: 25,
+    description: 'Price per sq.ft or per slab',
+  })
+  @IsNumber()
+  width: number;
 
   @ApiProperty({ example: 'Elegant white marble with grey veins.' })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiProperty({ example: '60x30 inches' })
-  @IsString()
-  dimensions: string;
-
   @ApiProperty({ example: '2 cm' })
-  @IsString()
-  thickness: string;
+  @IsNumber()
+  thickness: number;
 
   @ApiProperty({ example: 'Polished' })
   @IsString()
@@ -64,14 +74,6 @@ export class CreateProductDto {
   @IsBoolean()
   inStock: boolean;
 
-  @ApiProperty({ example: 'White' })
-  @IsString()
-  color: string;
-
-  @ApiProperty({ example: 'Italy' })
-  @IsString()
-  origin: string;
-
   @ApiProperty({ example: ['luxury', 'floor', 'classic'], type: [String] })
   @IsArray()
   tags: string[];
@@ -80,4 +82,24 @@ export class CreateProductDto {
   @ValidateNested()
   @Type(() => ImageDto)
   image: ImageDto;
+}
+
+export class CalculatorDto {
+  @ApiProperty({ example: 'Carrara White Marble' })
+  @IsString()
+  id: string;
+
+  @ApiProperty({
+    example: 25,
+    description: 'Price per sq.ft or per slab',
+  })
+  @IsNumber()
+  length: number;
+
+  @ApiProperty({
+    example: 25,
+    description: 'Price per sq.ft or per slab',
+  })
+  @IsNumber()
+  width: number;
 }

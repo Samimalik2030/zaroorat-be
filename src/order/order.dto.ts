@@ -15,8 +15,6 @@ export class ShippingAdress {
   @ApiProperty({ type: Number })
   zip: string;
 
-  @ApiProperty({ type: String })
-  country: string;
 }
 
 
@@ -25,12 +23,12 @@ export class CreateOrderDto {
   @ApiProperty({ type: [String], description: 'Array of product IDs' })
   @IsArray()
   @IsNotEmpty()
-  products: string[]; // Product IDs in an array
+  products: string[]; 
 
   @ApiProperty({ type: String, description: 'User ID associated with the order' })
   @IsString()
   @IsNotEmpty()
-  user: string; // User ID
+  user: string; 
 
   @ApiProperty({ example: 'Pending', description: 'Order status' })
   @IsString()
