@@ -8,6 +8,8 @@ import {
   Patch,
   NotFoundException,
   Param,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
@@ -27,6 +29,8 @@ import { MailerService } from 'src/mailer/service/mailer.service';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 import { MessageDto } from 'src/common/message.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageKitService } from 'src/image-kit/image-kit.service';
 
 @Controller('auth')
 export class UserController {
@@ -34,6 +38,8 @@ export class UserController {
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
     private readonly mailerService: MailerService,
+    private readonly imageKitService: ImageKitService,
+
   ) {}
 
   @Post('sign-in')
@@ -45,6 +51,7 @@ export class UserController {
   async SignIn(@Body() body: SignInDto): Promise<AuthUserDto> {
     console.log(body);
     const user = await this.userService.signIn(body);
+    console.log(user,'user in sign in');
     return user;
   }
 
@@ -64,18 +71,21 @@ export class UserController {
     const user = await this.userService.first({
       email: body.email,
     });
-    if(!user){
-      throw new NotFoundException(`No linked account found with this email ${body.email}`)
+    if (!user) {
+      throw new NotFoundException(
+        `No linked account found with this email ${body.email}`,
+      );
     }
-   
+
     const otp = await this.tokenService.generate(body.email, body.type);
     await this.mailerService.sendMail(
-      body.email,
+      user.email,
       'Reset Password',
-      `Please use this ${otp} to verify.`,
+      user.fullName,
+      `Your OTP is ${otp}`,
     );
     return {
-      message: `Email sent to ${body.email}.Please check your email.`,
+      message: `A reset password email with the OTP has been sent to ${user.email}. Please check your inbox (and spam folder) to proceed.`,
     };
   }
 
@@ -106,12 +116,19 @@ export class UserController {
   async authUser(@Body() body: SignInDto, @Req() req: Request): Promise<User> {
     return await this.userService.first({ email: req.user.email });
   }
-@Patch('update-profile/:id')
-async updateProfile(
-  @Param('id') id: string,
-  @Body() body: Partial<User>
-): Promise<User> {
-  return this.userService.updateProfile(id, body);
-}
+  @Patch('update-profile/:id')
+  async updateProfile(
+    @Param('id') id: string,
+    @Body() body: Partial<User>,
+  ): Promise<User> {
+    return this.userService.updateProfile(id, body);
+  }
 
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    const uploaded = await this.imageKitService.uploadImage(file);
+    return uploaded
+  }
 }

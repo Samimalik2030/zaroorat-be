@@ -8,6 +8,7 @@ import { User, UserSchema } from './user.mongo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TokenModule } from 'src/token/token.module';
 import { MailerModule } from 'src/mailer/mailer.module';
+import { ImageKitModule } from 'src/image-kit/image-kit.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { MailerModule } from 'src/mailer/mailer.module';
       }),
     }),
     TokenModule,
-    MailerModule
+    MailerModule,
+    ImageKitModule
   ],
   controllers: [UserController],
   providers: [UserService],

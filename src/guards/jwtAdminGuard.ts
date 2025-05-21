@@ -23,7 +23,8 @@ export class JwtAdminGuard implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
       request['user'] = payload;
-      if (payload.role !== 'admin') {
+      console.log(payload, 'payload');
+      if (payload.role !== 'Admin') {
         throw new ForbiddenException('You do not have admin privileges');
       }
     } catch (e) {

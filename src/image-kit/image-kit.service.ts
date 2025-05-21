@@ -14,11 +14,11 @@ export class ImageKitService {
   }
 
   async uploadImage(file: Express.Multer.File): Promise<any> {
-    const { fileId, url } = await this.imageKit.upload({
+    const { fileId, url,filePath,fileType,name } = await this.imageKit.upload({
       file: file.buffer.toString('base64'),
       fileName: `${Date.now()}-${file.originalname}`,
     });
-    return { fileId, url };
+    return { fileId, url,filePath,fileType,name };
   }
 
   async uploadImages(files: Express.Multer.File[]): Promise<any[]> {

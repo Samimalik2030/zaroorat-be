@@ -5,7 +5,7 @@ import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SeedService implements OnApplicationBootstrap {
-  private readonly logger = new Logger(SeedService.name); 
+  private readonly logger = new Logger(SeedService.name);
 
   constructor(private readonly usersService: UserService) {}
 
@@ -14,11 +14,10 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async seedAdminUser() {
-    const adminEmail = 'admin@example.com';
-    const adminPassword = 'Admin@123';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@gmail.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'password';
 
     try {
-      // Check if admin already exists
       const adminExists = await this.usersService.first({
         email: adminEmail,
       });
@@ -27,12 +26,11 @@ export class SeedService implements OnApplicationBootstrap {
         return;
       }
 
-      // Seed the admin user
       await this.usersService.seedAdmin({
         email: adminEmail,
         password: adminPassword,
         fullName: 'admin',
-        role:Role.ADMIN
+        role: Role.ADMIN,
       });
 
       this.logger.log('Admin user created successfully.');

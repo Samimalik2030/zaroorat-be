@@ -11,17 +11,13 @@ import { ImageKitModule } from './image-kit/image-kit.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SeedService } from './seeder/seeder.service';
 import { InquiryModule } from './inquiry/inquiry.module';
-
-import { ReviewModule } from './review/review.module';
 import { MailerModule } from './mailer/mailer.module';
-import { ProductsModule } from './products/products.module';
-import { CartModule } from './cart/cart.module';
-import { OrderModule } from './order/order.module';
-import { AnalyticsModule } from './analytics/analytics.module';
-import { WishlistModule } from './wishlist/wishlist.module';
 import { ImageModule } from './image/image.module';
-import { ProjectModule } from './project/project.module';
-import { PayfastModule } from './payfast/payfast.module';
+import { CandidateModule } from './candidate/candidate.module';
+import { JobModule } from './job/job.module';
+import { DistrictOfficersModule } from './district-officers/district-officers.module';
+import { RecruiterModule } from './recruiter/recruiter.module';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -43,16 +39,13 @@ import { PayfastModule } from './payfast/payfast.module';
     TokenModule,
     ImageKitModule,
     InquiryModule,
-    ReviewModule,
     MailerModule,
-    ProductsModule,
-    CartModule,
-    OrderModule,
-    AnalyticsModule,
-    WishlistModule,
     ImageModule,
-    ProjectModule,
-    PayfastModule,
+    CandidateModule,
+    JobModule,
+    DistrictOfficersModule,
+    RecruiterModule,
+    ApplicationModule,
   ],
   controllers: [AppController],
   providers: [

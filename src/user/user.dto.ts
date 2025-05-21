@@ -5,7 +5,9 @@ import { User } from './user.mongo';
 
 export enum Role {
   ADMIN = 'Admin',
-  CUSTOMER = 'Customer'
+  DISTRICT_OFFICER = 'District Officer',
+  RECRUITER = 'Recruiter',
+  CANDIDATE = 'Candidate',
 }
 
 export enum TokenType {
@@ -25,7 +27,6 @@ export class SignInDto {
   @ApiProperty({ default: 'admin@example.com' })
   @IsNotEmpty()
   @IsEmail()
-  @Transform((o) => o.value.toLowerCase().trim())
   email: string;
 
   @ApiProperty({ default: 'Admin@123', required: true })
@@ -38,7 +39,6 @@ export class SignUpDto {
   @ApiProperty({ default: 'admin@example.com' })
   @IsNotEmpty()
   @IsEmail()
-  @Transform((o) => o.value.toLowerCase().trim())
   email: string;
 
   @ApiProperty({ default: 'Admin@123', required: true })
@@ -46,8 +46,12 @@ export class SignUpDto {
   @IsString()
   password: string;
 
+  @ApiProperty({ default: 'Admin@123', required: true })
+  @IsNotEmpty()
+  @IsString()
+  confirmPassword: string;
 
-  @ApiProperty({required: true })
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
   fullName: string;
@@ -104,4 +108,26 @@ export class VerifyOtpDTO {
   @IsNotEmpty()
   @IsString()
   otp: string;
+}
+
+export class CreateUserDto {
+  @ApiProperty({ default: 'admin@example.com' })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  role: Role;
+
+  @ApiProperty({ default: 535443 })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+    @ApiProperty({ default: 535443 })
+  @IsNotEmpty()
+  @IsString()
+  roleType: string;
 }

@@ -10,7 +10,6 @@ export type UserDocument = HydratedDocument<User>;
 
 @MongoSchema()
 export class User {
-
   @ApiProperty({
     description: 'Unique identifier of the user',
     type: String,
@@ -19,9 +18,8 @@ export class User {
   @Transform((obj) => obj.value.toString())
   _id: Types.ObjectId;
 
-  
   @ApiProperty({ type: () => FileDto })
-  @Prop({ type: Object })
+  @Prop(FileDto)
   profileImage: FileDto;
 
   @ApiProperty({
@@ -64,6 +62,14 @@ export class User {
   })
   @Prop({ type: Date })
   createdAt: Date;
+
+  @ApiProperty({
+    description: 'Is Profile Completed',
+    type: Boolean,
+    example: true,
+  })
+  @Prop({ type: Boolean, default: false })
+  isActive: boolean;
 
   @ApiProperty({
     description: 'Timestamp when the user was last updated',

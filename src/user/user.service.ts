@@ -3,7 +3,9 @@ import {
   Body,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -12,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from './user.mongo';
 import {
   AuthUserDto,
+  CreateUserDto,
   ResetPasswordDTO,
   Role,
   SignInDto,
@@ -21,6 +24,8 @@ import {
 } from './user.dto';
 import { TokenService } from 'src/token/token.service';
 import { MessageDto } from 'src/common/message.dto';
+import { MailerService } from 'src/mailer/service/mailer.service';
+import { CreateAxiosDefaults } from 'axios';
 
 @Injectable()
 export class UserService {
@@ -28,6 +33,7 @@ export class UserService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async first(data: Partial<User>): Promise<User> {
@@ -55,7 +61,7 @@ export class UserService {
     const createdUser = await this.userModel.create({
       ...data,
       password: hashedPassword,
-      role: Role.CUSTOMER,
+      role: Role.CANDIDATE,
     });
 
     const accessToken = await this.jwtService.signAsync({
@@ -66,7 +72,6 @@ export class UserService {
 
     return {
       user: createdUser,
-
       accessToken,
     };
   }
@@ -76,22 +81,30 @@ export class UserService {
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
-
+    console.log(user, 'user found');
     const validPassword = await bcrypt.compare(body.password, user.password);
     if (!validPassword) {
       throw new UnauthorizedException('Invalid email or password');
     }
-
+    if (
+      user.role === Role.ADMIN ||
+      user.role === Role.DISTRICT_OFFICER ||
+      user.role === Role.RECRUITER
+    ) {
+      await this.mailerService.sendMail(
+        user.email,
+        'Login Alert',
+        user.fullName,
+        'You have successfully logged in to your account.If you did not log in, please contact us.',
+      );
+    }
     const accessToken = await this.jwtService.signAsync({
       sub: user._id,
       email: user.email,
       name: user.fullName,
+      role: user.role,
     });
-
-    return {
-      user,
-      accessToken,
-    };
+    return { user: user, accessToken: accessToken };
   }
 
   async verifyOtp(@Body() body: VerifyOtpDTO): Promise<MessageDto> {
@@ -168,6 +181,47 @@ export class UserService {
       message: 'Profile Updated',
       user,
     };
+  }
 
+  // async createUser(data: CreateUserDto) {
+  //   const createdUser = await this.userModel.create({
+  //     fullName: data.name,
+  //     email: data.email,
+  //     role: data.role,
+  //   });
+  //   await this.mailerService.sendMail(
+  //     createdUser.email,
+  //     'Your District Officer Account Has Been Created',
+  //     createdUser.fullName,
+  //     'We are pleased to inform you that your account has been successfully created for the District Officer portal.Please set your password to activate your account and begin using the system.',
+  //   );
+  // }
+
+  async createUser(data: CreateUserDto) {
+    try {
+      const createdUser = await this.userModel.create({
+        fullName: data.name,
+        email: data.email,
+        role: data.role,
+      });
+
+      await this.mailerService.sendMail(
+        createdUser.email,
+        `Your ${data.roleType} Account Has Been Created`,
+        createdUser.fullName,
+        `Dear ${createdUser.fullName},
+
+We are pleased to inform you that your account has been successfully created for the ${data.roleType} portal.
+
+Please set your password by going on forgot password screen and enter this email to activate your account and begin using the system.`,
+      );
+
+      return createdUser;
+    } catch (error) {
+      if (data.email) {
+        await this.userModel.deleteOne({ email: data.email });
+      }
+      throw new Error('Failed to create user and send email');
+    }
   }
 }
