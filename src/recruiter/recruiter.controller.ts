@@ -60,7 +60,7 @@ export class RecruiterController {
     return this.recruiterService.findById(id);
   }
 
- @Get(':userId')
+ @Get('/user/:userId')
   @ApiOperation({ summary: 'Get a recruiter by user ID' })
   @ApiParam({ name: 'userId', required: true, description: 'Recruiter ID' })
   @ApiResponse({

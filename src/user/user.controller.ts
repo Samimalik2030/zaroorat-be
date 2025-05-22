@@ -39,7 +39,6 @@ export class UserController {
     private readonly tokenService: TokenService,
     private readonly mailerService: MailerService,
     private readonly imageKitService: ImageKitService,
-
   ) {}
 
   @Post('sign-in')
@@ -51,7 +50,7 @@ export class UserController {
   async SignIn(@Body() body: SignInDto): Promise<AuthUserDto> {
     console.log(body);
     const user = await this.userService.signIn(body);
-    console.log(user,'user in sign in');
+    console.log(user, 'user in sign in');
     return user;
   }
 
@@ -124,11 +123,26 @@ export class UserController {
     return this.userService.updateProfile(id, body);
   }
 
-
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     const uploaded = await this.imageKitService.uploadImage(file);
-    return uploaded
+    return uploaded;
+  }
+
+  @Post('upload-profile')
+  @UseInterceptors(FileInterceptor('file'))
+  @UseGuards(JwtAuthGuard)
+  async uploadProfileImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+  ) {
+    const userId = req.user._id;
+    console.log(file)
+    const uploaded = await this.imageKitService.uploadImage(file);
+    const user = await this.userService.updateProfile(userId, {
+      profileImage: uploaded,
+    });
+    return user
   }
 }

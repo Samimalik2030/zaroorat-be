@@ -9,10 +9,16 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Patch,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApplicationService } from './application.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { CreateApplicationDto, UpdateApplicationDto } from './application.dto';
+import { ApplicationUpdateDto, CreateApplicationDto,} from './application.dto';
+import { Application } from './application.mongo';
+import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
+import { Request } from 'express';
 
 @ApiTags('Applications')
 @Controller('applications')
@@ -28,14 +34,14 @@ export class ApplicationController {
 
 @Get()
 @ApiOperation({ summary: 'Get all applications' })
-@ApiResponse({ status: 200, description: 'List of applications returned successfully' })
+@ApiResponse({ status: 200,type:[Application], description: 'List of applications returned successfully' })
 @ApiQuery({
   name: 'district',
   required: false,
   description: 'Filter applications by district',
   type: String,
 })
-findAll(@Query('district') district?: string) {
+findAll(@Query('district') district?: string):Promise<Application[]> {
   return this.applicationService.findAll(district);
 }
 
@@ -48,16 +54,29 @@ findAll(@Query('district') district?: string) {
     return this.applicationService.findById(id);
   }
 
-  @Put(':id')
+
+    @Get('/candidate/:candidateId')
+  @ApiOperation({ summary: 'Get application by User Id' })
+  @ApiParam({ name: 'candidateId', type: String })
+  @ApiResponse({ status: 200,type:[Application], description: 'Application found' })
+  @ApiResponse({ status: 404, description: 'Application not found' })
+  findApplicationsByCandidate(@Param('candidateId') candidateId: string):Promise<Application[]> {
+    return this.applicationService.findByCandidateId(candidateId);
+  }
+
+  @Patch(':id')
   @ApiOperation({ summary: 'Update application by ID' })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'Application updated successfully' })
   @ApiResponse({ status: 404, description: 'Application not found' })
+  @UseGuards(JwtAuthGuard)
   update(
     @Param('id') id: string,
-    @Body() updateDto: UpdateApplicationDto,
+    @Body() updateDto: ApplicationUpdateDto,
+    @Req() req:Request
   ) {
-    return this.applicationService.update(id, updateDto);
+    console.log(req.user._id,'user id')
+    return this.applicationService.update(id, updateDto,req.user._id);
   }
 
   @Delete(':id')

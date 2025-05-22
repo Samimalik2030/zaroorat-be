@@ -41,9 +41,7 @@ export class CandidateService {
 
   async findByDistrict(district: string): Promise<Candidate[]> {
     return await this.candidateModel.find({
-      contact: {
-        district: district,
-      },
+    district:district
     });
   }
 

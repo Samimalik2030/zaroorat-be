@@ -17,8 +17,6 @@ import { Contact } from './schema/emerency-contact.schema';
 import { PhysicalInfo } from './schema/physical.info.schema';
 
 export class CreatePersonalInfoDto {
-
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -26,6 +24,14 @@ export class CreatePersonalInfoDto {
     description: "Father's name of the candidate",
   })
   father_name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'Rashid Khan',
+    description: "Father's name of the candidate",
+  })
+  district: string;
 
   @IsString()
   @IsNotEmpty()
@@ -112,6 +118,14 @@ export class UpdateCandidateDto {
   })
   @IsOptional()
   religion: string;
+
+  @ApiProperty({
+    example: 'Islam',
+    description: 'Religion of the candidate',
+    required: false,
+  })
+  @IsOptional()
+  district: string;
 
   @ApiProperty({ type: Address, required: false })
   @Type(() => Address)

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsString } from 'class-validator';
+import { IsEnum, IsMongoId, IsString } from 'class-validator';
 
 export class CreateApplicationDto {
   @ApiProperty()
@@ -11,23 +11,25 @@ export class CreateApplicationDto {
   job: string;
 }
 
-export class UpdateApplicationDto {
-  @ApiProperty()
-  @IsString()
-  status: string;
-}
-
-
 export class ApplicationQueryDto {
   @ApiProperty()
   @IsString()
   status: string;
 }
 
-
 export enum ApplicationStatus {
-  FIRST = 'First',
-  SECOND = 'Second',
-  THIRD = 'Third',
-  FOURTH = 'Fourth',
+  DATA_VERIFICATION = 'Data Verification',
+  PHYSICAL_TEST = 'Physical Test',
+  RUNNING = 'Running',
+  WRITTEN_TEST = 'Written Test',
+  INTERVIEW = 'Interview',
+  Rejected = 'Rejected',
+  SELECTED = 'Selected'
+}
+
+
+export class ApplicationUpdateDto {
+  @ApiProperty()
+  @IsEnum(ApplicationStatus)
+  status: ApplicationStatus;
 }

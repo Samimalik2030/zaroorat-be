@@ -6,6 +6,7 @@ import { MongoSchema } from 'src/decorator/mongo-schema.decorator';
 import { Candidate } from 'src/candidate/schema/candidate.monogo';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Job } from 'src/job/job.mongo';
+import { ApplicationStatus } from './application.dto';
 
 export type JobDocument = Application & Document;
 
@@ -19,9 +20,13 @@ export class Application {
   @Transform((obj) => obj.value.toString())
   _id: Types.ObjectId;
 
-  @ApiProperty({ example: 'Male', description: 'Status of the job' })
-  @Prop()
-  status: string;
+ @ApiProperty({ 
+    example: ApplicationStatus.DATA_VERIFICATION, 
+    description: 'Status of the job', 
+    enum: ApplicationStatus 
+  })
+  @Prop({ enum: ApplicationStatus })
+  status: ApplicationStatus;
 
   @ApiProperty({
     type: () => Candidate,
@@ -35,7 +40,7 @@ export class Application {
   candidate: MongooseSchema.Types.ObjectId | Candidate;
 
   @ApiProperty({
-    type: () => Candidate,
+    type: () => Job,
     description: 'Reference to the Job',
   })
   @Prop({

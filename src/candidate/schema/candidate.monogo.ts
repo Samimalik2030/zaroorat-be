@@ -53,6 +53,10 @@ export class Candidate {
   @Prop()
   religion: string;
 
+  @ApiProperty({ example: 'Multan', description: 'District of the candidate' })
+  @Prop({ required: true })
+  district: string;
+
   @ApiProperty({ type: Address })
   @Type(() => Address)
   @Prop({ type: Address, default: null })

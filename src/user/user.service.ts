@@ -171,7 +171,7 @@ export class UserService {
     const user = await this.userModel.findByIdAndUpdate(
       id,
       {
-        data,
+        ...data,
       },
       {
         returnDocument: 'after',
