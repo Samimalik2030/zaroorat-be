@@ -6,32 +6,29 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
-  DistrictOfficer,
-  DistrictOfficerDocument,
-} from './district-officers.mongo';
-import {
   CreateDistrictOfficerDto,
   DistrictOfficerQueryDto,
   UpdateDistrictOfficerDto,
-} from './district-officers.dto';
+} from './city-officers.dto';
 import { UserService } from 'src/user/user.service';
 import { Role } from 'src/user/user.dto';
+import { CityOfficer, CityOfficerDocument } from './city-officers.mongo';
 
 @Injectable()
-export class DistrictOfficerService {
+export class CityOfficerService {
   constructor(
-    @InjectModel(DistrictOfficer.name)
-    private readonly officerModel: Model<DistrictOfficerDocument>,
+    @InjectModel(CityOfficer.name)
+    private readonly officerModel: Model<CityOfficerDocument>,
     private readonly userService: UserService,
   ) {}
 
-  async create(createDto: CreateDistrictOfficerDto): Promise<DistrictOfficer> {
+  async create(createDto: CreateDistrictOfficerDto): Promise<CityOfficer> {
     const exists = await this.officerModel.findOne({
-      district: createDto.district,
+      city: createDto.city,
     });
     if (exists) {
       throw new UnprocessableEntityException(
-        'There is already a  officer in this district',
+        'There is already a  manager in this city',
       );
     }
     const foundUser = await this.userService.first({
@@ -45,8 +42,8 @@ export class DistrictOfficerService {
     const newUser = await this.userService.createUser({
       email: createDto.email,
       name: createDto.name,
-      role: Role.DISTRICT_OFFICER,
-      roleType: 'District Officer',
+      role: Role.CITY_MANAGER,
+      roleType: 'City Manager',
     });
     const created = await this.officerModel.create({
       ...createDto,
@@ -55,16 +52,16 @@ export class DistrictOfficerService {
     return created;
   }
 
-  async findAll(query: DistrictOfficerQueryDto): Promise<DistrictOfficer[]> {
+  async findAll(query: DistrictOfficerQueryDto): Promise<CityOfficer[]> {
     const filter: any = {};
-    if (query.cnic) filter.cnic = query.cnic;
-    if (query.district) filter.district = new RegExp(query.district, 'i');
+
     if (query.name) filter.name = new RegExp(query.name, 'i');
+    if (query.city) filter.city = new RegExp(query.city, 'i');
 
     return this.officerModel.find(filter).populate('user').exec();
   }
 
-  async findById(id: string): Promise<DistrictOfficer> {
+  async findById(id: string): Promise<CityOfficer> {
     const officer = await this.officerModel.findById(id).populate('user');
     if (!officer) throw new NotFoundException('District Officer not found');
     return officer;
@@ -73,7 +70,7 @@ export class DistrictOfficerService {
   async update(
     id: string,
     updateDto: UpdateDistrictOfficerDto,
-  ): Promise<DistrictOfficer> {
+  ): Promise<CityOfficer> {
     const updated = await this.officerModel
       .findByIdAndUpdate(id, updateDto, { new: true })
       .populate('user');
@@ -82,9 +79,17 @@ export class DistrictOfficerService {
     return updated;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<CityOfficer> {
+    const manager = await this.officerModel.findById(id);
+    if (!manager) {
+      throw new NotFoundException('City Manager not found');
+    }
+
     const result = await this.officerModel.findByIdAndDelete(id);
-    if (!result) throw new NotFoundException('District Officer not found');
+    if(result){
+      await this.userService.delete(manager?.user)
+    }
+    return result
   }
 
   async getOfficerByUser(id: string) {
@@ -93,10 +98,10 @@ export class DistrictOfficerService {
     if (!foundUser) {
       return new NotFoundException('User not found');
     }
-    console.log(foundUser, 'found user');
+
     const foundRecruiter = await this.officerModel.findOne({
       user: foundUser,
-    });
+    }).populate('user');
     return foundRecruiter;
   }
 }

@@ -8,7 +8,7 @@ import {
   IsEmail,
 } from 'class-validator';
 
-export class CreateRecruiterDto {
+export class CreateSalesmanDto {
   @ApiProperty({ example: '03001234567', description: 'Phone number' })
   @IsNotEmpty()
   email: string;
@@ -23,11 +23,6 @@ export class CreateRecruiterDto {
   @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({ example: '35202-1234567-8', description: 'CNIC number' })
-  @IsString()
-  @IsNotEmpty()
-  cnic: string;
-
   @ApiProperty({
     example: 'male',
     description: 'Gender',
@@ -38,33 +33,17 @@ export class CreateRecruiterDto {
   gender: string;
 
   @ApiProperty({
-    example: '123 Street, Lahore',
-    description: 'Address',
-  })
-  @IsString()
-  @IsNotEmpty()
-  address: string;
-
-  @ApiProperty({
-    example: 'Bachelor’s in Criminology',
-    description: 'Qualification',
-  })
-  @IsString()
-  @IsNotEmpty()
-  qualification: string;
-
-  @ApiProperty({
     example: 'Lahore',
     description: 'District',
   })
   @IsString()
   @IsNotEmpty()
-  district: string;
+  city: string;
 }
 
-export class UpdateRecruiterDto extends PartialType(CreateRecruiterDto) {}
+export class UpdateSalesmanDto extends PartialType(CreateSalesmanDto) {}
 
-export class RecruiterQueryDto {
+export class SalesmanQueryDto {
   // @ApiProperty({
   //   example: '35202-1234567-8',
   //   description: 'CNIC number',
@@ -88,5 +67,5 @@ export class RecruiterQueryDto {
   })
   @IsString()
   @IsOptional()
-  district?: string;
+  city?: string;
 }

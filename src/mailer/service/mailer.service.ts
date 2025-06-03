@@ -31,19 +31,19 @@ export class MailerService {
         <p>${message}</p>
         <p>If you have any questions, feel free to contact us.</p>
         <hr style="margin: 40px 0;" />
-        <p style="font-size: 12px; color: #888;">This email was sent by Punjab Police, Lahore, Pakistan</p>
+        <p style="font-size: 12px; color: #888;">This email was sent by Professional Service, Lahore, Pakistan</p>
       </div>
     `;
 
     const mailOptions = {
-      from: `"Punjab Police" <${process.env.GMAIL_USERNAME}>`,
+      from: `"Professional Service" <${process.env.GMAIL_USERNAME}>`,
       to,
       subject,
       html: htmlContent,
       attachments: [
         {
           filename: 'logo.png',
-          path: path.join(process.cwd(), 'src', 'common', 'police-logo.png'),
+          path: path.join(process.cwd(), 'src', 'common', 'logo.jfif'),
 
           cid: 'logo',
         },

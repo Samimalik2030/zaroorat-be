@@ -13,11 +13,10 @@ import { SeedService } from './seeder/seeder.service';
 import { InquiryModule } from './inquiry/inquiry.module';
 import { MailerModule } from './mailer/mailer.module';
 import { ImageModule } from './image/image.module';
-import { CandidateModule } from './candidate/candidate.module';
-import { JobModule } from './job/job.module';
-import { DistrictOfficersModule } from './district-officers/district-officers.module';
-import { RecruiterModule } from './recruiter/recruiter.module';
-import { ApplicationModule } from './application/application.module';
+import { CityOfficersModule } from './city-officers/city-officers.module';
+import { SalesmanModule } from './salesman/salesman.module';
+import { ProfessionalModule } from './professional/professional.module';
+import { BookingsModule } from './bookings/bookings.module';
 
 @Module({
   imports: [
@@ -41,11 +40,13 @@ import { ApplicationModule } from './application/application.module';
     InquiryModule,
     MailerModule,
     ImageModule,
-    CandidateModule,
-    JobModule,
-    DistrictOfficersModule,
-    RecruiterModule,
-    ApplicationModule,
+
+    CityOfficersModule,
+    SalesmanModule,
+
+    ProfessionalModule,
+
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [

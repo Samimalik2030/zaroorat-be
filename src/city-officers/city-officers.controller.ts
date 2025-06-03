@@ -15,19 +15,19 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { DistrictOfficerService } from './district-officers.service';
-import { DistrictOfficer } from './district-officers.mongo';
 import {
   CreateDistrictOfficerDto,
   DistrictOfficerQueryDto,
   UpdateDistrictOfficerDto,
-} from './district-officers.dto';
+} from './city-officers.dto';
+import { CityOfficer } from './city-officers.mongo';
+import { CityOfficerService } from './city-officers.service';
 
-@ApiTags('District Officers')
-@Controller('district-officers')
-export class DistrictOfficerController {
+@ApiTags('City Officers')
+@Controller('city-officers')
+export class CityOfficerController {
   constructor(
-    private readonly districtOfficerService: DistrictOfficerService,
+    private readonly cityOfficerService: CityOfficerService,
   ) {}
 
   @Post()
@@ -35,10 +35,10 @@ export class DistrictOfficerController {
   @ApiResponse({
     status: 201,
     description: 'District officer created',
-    type: DistrictOfficer,
+    type: CityOfficer,
   })
   async create(@Body() createDto: CreateDistrictOfficerDto) {
-    return this.districtOfficerService.create(createDto);
+    return this.cityOfficerService.create(createDto);
   }
 
   @Get()
@@ -46,10 +46,10 @@ export class DistrictOfficerController {
   @ApiResponse({
     status: 200,
     description: 'List of district officers',
-    type: [DistrictOfficer],
+    type: [CityOfficer],
   })
   async findAll(@Query() query: DistrictOfficerQueryDto) {
-    return this.districtOfficerService.findAll(query);
+    return this.cityOfficerService.findAll(query);
   }
 
   @Get(':id')
@@ -58,10 +58,10 @@ export class DistrictOfficerController {
   @ApiResponse({
     status: 200,
     description: 'District officer found',
-    type: DistrictOfficer,
+    type: CityOfficer,
   })
   async findOne(@Param('id') id: string) {
-    return this.districtOfficerService.findById(id);
+    return this.cityOfficerService.findById(id);
   }
 
   @Get('/user/:userId')
@@ -70,10 +70,10 @@ export class DistrictOfficerController {
   @ApiResponse({
     status: 200,
     description: 'Recruiter data returned',
-    type: DistrictOfficer,
+    type: CityOfficer,
   })
   async ByUser(@Param('userId') userId: string) {
-    return this.districtOfficerService.getOfficerByUser(userId);
+    return this.cityOfficerService.getOfficerByUser(userId);
   }
 
   @Patch(':id')
@@ -82,13 +82,13 @@ export class DistrictOfficerController {
   @ApiResponse({
     status: 200,
     description: 'District officer updated',
-    type: DistrictOfficer,
+    type: CityOfficer,
   })
   async update(
     @Param('id') id: string,
     @Body() updateDto: UpdateDistrictOfficerDto,
   ) {
-    return this.districtOfficerService.update(id, updateDto);
+    return this.cityOfficerService.update(id, updateDto);
   }
 
   @Delete(':id')
@@ -96,6 +96,6 @@ export class DistrictOfficerController {
   @ApiParam({ name: 'id', description: 'District officer MongoDB ID' })
   @ApiResponse({ status: 200, description: 'District officer deleted' })
   async remove(@Param('id') id: string) {
-    return this.districtOfficerService.remove(id);
+    return this.cityOfficerService.remove(id);
   }
 }

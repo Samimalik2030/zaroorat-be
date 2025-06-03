@@ -1,16 +1,16 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/user/user.mongo';
 import { Transform } from 'class-transformer';
 import { Types } from 'mongoose';
 import { MongoSchema } from 'src/decorator/mongo-schema.decorator';
+import { CityOfficer } from 'src/city-officers/city-officers.mongo';
 
-export type RecruiterDocument = Recruiter & Document;
+export type SalesmanDocument = Salesman & Document;
 
 @MongoSchema({ timestamps: true })
-export class Recruiter {
-
+export class Salesman {
   @ApiProperty({
     description: 'Unique identifier of the user',
     type: String,
@@ -27,44 +27,31 @@ export class Recruiter {
   phone: string;
 
   @ApiProperty({
-    example: '35202-1234567-8',
-    description: 'CNIC number',
-  })
-  @Prop({ required: true, trim: true })
-  cnic: string;
-
-  @ApiProperty({
     example: 'male',
-    enum: ['male', 'female', 'other'],
+    enum: ['male', 'female'],
     description: 'Gender',
   })
-  @Prop({ required: true, enum: ['male', 'female' ] })
+  @Prop({ required: true, enum: ['male', 'female'] })
   gender: string;
-
-
-  @ApiProperty({
-    example: '123 Street, Lahore',
-    description: 'Address of the recruiter',
-    required: false,
-  })
-  @Prop({ trim: true })
-  address: string;
-
-  @ApiProperty({
-    example: 'Bachelor’s in Criminology',
-    description: 'Educational qualification',
-    required: false,
-  })
-  @Prop({ trim: true })
-  qualification: string;
 
   @ApiProperty({
     example: 'Lahore',
-    description: 'District assigned to the recruiter',
+    description: 'city assigned to the salesman',
     required: false,
   })
-  @Prop({ trim: true })
-  district: string;
+  @Prop()
+  city: string;
+
+  // @ApiProperty({
+  //   type: () => User,
+  //   description: 'Reference to the associated city officer account',
+  // })
+  // @Prop({
+  //   type: MongooseSchema.Types.ObjectId,
+  //   ref: 'CityOfficer',
+  //   required: true,
+  // })
+  // assignedBy: MongooseSchema.Types.ObjectId | CityOfficer;
 
   @ApiProperty({
     type: () => User,
@@ -74,4 +61,4 @@ export class Recruiter {
   user: MongooseSchema.Types.ObjectId | User;
 }
 
-export const RecruiterSchema = SchemaFactory.createForClass(Recruiter);
+export const SalesmanSchema = SchemaFactory.createForClass(Salesman);

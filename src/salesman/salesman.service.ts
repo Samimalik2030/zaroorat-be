@@ -5,20 +5,21 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Recruiter, RecruiterDocument } from './recruiter.mongo';
-import { CreateRecruiterDto, RecruiterQueryDto } from './recruiter.dto';
 import { UserService } from 'src/user/user.service';
 import { Role } from 'src/user/user.dto';
+import { Salesman, SalesmanDocument } from './salesman.mongo';
+import { CreateSalesmanDto, SalesmanQueryDto } from './salesman.dto';
+import { SafeSubscriber } from 'rxjs/internal/Subscriber';
 
 @Injectable()
-export class RecruiterService {
+export class SalesmanService {
   constructor(
-    @InjectModel(Recruiter.name)
-    private readonly recruiterModel: Model<RecruiterDocument>,
+    @InjectModel(Salesman.name)
+    private readonly recruiterModel: Model<SalesmanDocument>,
     private readonly UserService: UserService,
   ) {}
 
-  async create(createRecruiterDto: CreateRecruiterDto): Promise<Recruiter> {
+  async create(createRecruiterDto: CreateSalesmanDto): Promise<Salesman> {
     const user = await this.UserService.first({
       email: createRecruiterDto.email,
     });
@@ -30,8 +31,8 @@ export class RecruiterService {
     const newUser = await this.UserService.createUser({
       email: createRecruiterDto.email,
       name: createRecruiterDto.name,
-      role: Role.RECRUITER,
-      roleType:"Recruiter Portal"
+      role: Role.SALESMAN,
+      roleType:"Salesman Portal"
     });
     const recruiter = new this.recruiterModel({
       ...createRecruiterDto,
@@ -40,15 +41,15 @@ export class RecruiterService {
     return recruiter.save();
   }
 
-  async findAll(query: RecruiterQueryDto): Promise<Recruiter[]> {
+  async findAll(query: SalesmanQueryDto): Promise<Salesman[]> {
     const filter: any = {};
 
-    if (query.district) filter.district = query.district;
+    if (query.city) filter.city = query.city;
 
     return this.recruiterModel.find(filter).populate('user').exec();
   }
 
-  async findById(id: string): Promise<Recruiter> {
+  async findById(id: string): Promise<Salesman> {
     const recruiter = await this.recruiterModel.findById(id).populate('user');
     if (!recruiter) {
       throw new NotFoundException('Recruiter not found');
@@ -58,8 +59,8 @@ export class RecruiterService {
 
   async update(
     id: string,
-    updateDto: Partial<CreateRecruiterDto>,
-  ): Promise<Recruiter> {
+    updateDto: Partial<CreateSalesmanDto>,
+  ): Promise<Salesman> {
     const recruiter = await this.recruiterModel.findByIdAndUpdate(
       id,
       updateDto,
@@ -80,7 +81,7 @@ export class RecruiterService {
     }
   }
 
-  async getRecruiterByUser(id: string) {
+  async getSalesmanByUser(id: string) {
     const foundUser = await this.UserService.findById(id);
     if (foundUser) {
       return new NotFoundException('User not found');

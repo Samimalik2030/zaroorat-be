@@ -25,7 +25,7 @@ import {
 import { TokenService } from 'src/token/token.service';
 import { MessageDto } from 'src/common/message.dto';
 import { MailerService } from 'src/mailer/service/mailer.service';
-import { CreateAxiosDefaults } from 'axios';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -61,7 +61,7 @@ export class UserService {
     const createdUser = await this.userModel.create({
       ...data,
       password: hashedPassword,
-      role: Role.CANDIDATE,
+      role: Role.CUSTOMER,
     });
 
     const accessToken = await this.jwtService.signAsync({
@@ -88,8 +88,8 @@ export class UserService {
     }
     if (
       user.role === Role.ADMIN ||
-      user.role === Role.DISTRICT_OFFICER ||
-      user.role === Role.RECRUITER
+      user.role === Role.CITY_MANAGER ||
+      user.role === Role.SALESMAN
     ) {
       await this.mailerService.sendMail(
         user.email,
@@ -199,10 +199,13 @@ export class UserService {
 
   async createUser(data: CreateUserDto) {
     try {
+      const password = crypto.randomBytes(8).toString('hex');
+      const hashedPassword = bcrypt.hashSync(password, 10);
       const createdUser = await this.userModel.create({
         fullName: data.name,
         email: data.email,
         role: data.role,
+        password: hashedPassword,
       });
 
       await this.mailerService.sendMail(
@@ -213,7 +216,7 @@ export class UserService {
 
 We are pleased to inform you that your account has been successfully created for the ${data.roleType} portal.
 
-Please set your password by going on forgot password screen and enter this email to activate your account and begin using the system.`,
+Please use this email ${createdUser.email} and password ${password} to begin using the system.`,
       );
 
       return createdUser;
@@ -223,5 +226,11 @@ Please set your password by going on forgot password screen and enter this email
       }
       throw new Error('Failed to create user and send email');
     }
+  }
+
+  async delete(id: any) {
+    const deleted = await this.userModel.findByIdAndDelete(id);
+    console.log(deleted);
+    return deleted;
   }
 }
