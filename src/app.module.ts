@@ -17,6 +17,7 @@ import { CityOfficersModule } from './city-officers/city-officers.module';
 import { SalesmanModule } from './salesman/salesman.module';
 import { ProfessionalModule } from './professional/professional.module';
 import { BookingsModule } from './bookings/bookings.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -47,6 +48,8 @@ import { BookingsModule } from './bookings/bookings.module';
     ProfessionalModule,
 
     BookingsModule,
+
+    WhatsappModule,
   ],
   controllers: [AppController],
   providers: [

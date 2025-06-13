@@ -34,7 +34,7 @@ export class ImageKitService {
         }),
       );
   
-      // Return an array of upload results
+     
       return uploadResults;
     } catch (error) {
       console.error('Error uploading files to ImageKit:', error.message);

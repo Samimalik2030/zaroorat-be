@@ -8,11 +8,27 @@ import {
   NotFoundException,
   UseInterceptors,
   UploadedFile,
+  UploadedFiles,
+  Patch,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiConsumes, ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiTags,
+  ApiConsumes,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
+import {
+  AnyFilesInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+  NoFilesInterceptor,
+} from '@nestjs/platform-express';
 import { Booking } from './bookings.mongo';
 import { BookingService } from './bookings.service';
+import { BookingQueryDTO, CreateBookingDto, PatchProfessionalDTO } from './bookings.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -20,32 +36,34 @@ export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new booking (with optional audio upload)' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        user: { type: 'string', example: '60f7a1c5e5b3a72b3c8a830f' },
-        professional: { type: 'string', example: '60f7a1c5e5b3a72b3c8a830f' },
-        bookingDateTime: { type: 'string', format: 'date-time' },
-        status: { type: 'string', example: 'PENDING' },
-        notes: { type: 'string', example: 'Please be on time.' },
-        serviceAddress: { type: 'string', example: '123 Main Street' },
-        audioFile: {
-          type: 'string',
-          format: 'binary',
-          description: 'Optional voice recording file',
-        },
-      },
-    },
+  @ApiOperation({
+    summary: 'Create a new booking (with optional audio and images)',
   })
-  @UseInterceptors(FileInterceptor('audioFile'))
+  @ApiConsumes('multipart/form-data')
+  // @ApiBody({ type: CreateBookingDto })
+  // @UseInterceptors(
+  //   FileInterceptor('audio'),
+  //   FilesInterceptor('images', 10),
+  // )
+  @UseInterceptors(AnyFilesInterceptor())
   async createBooking(
-    @Body() bookingData: Partial<Booking>,
-    @UploadedFile() audioFile?: Express.Multer.File,
-  ): Promise<Booking> {
-    return this.bookingService.createBooking(bookingData, audioFile);
+    @Body() body: any,
+    @UploadedFile() audio?: Express.Multer.File,
+    @UploadedFiles() images?: Express.Multer.File[],
+  ): Promise<any> {
+    console.log(body);
+    return this.bookingService.createBooking(body, audio, images);
+  }
+// @Get()
+
+// async findAll(@Query() query: ProfessionalQueryDto): Promise<Professional[]> {
+//   return this.professionalService.findAll(query);
+// }
+  @Get()
+@ApiOperation({ summary: 'Get all bookings with optional filters' })
+@ApiResponse({ status: 200, description: 'List of Bookings', type: [Booking] })
+  async getAllBooking(@Query() query: BookingQueryDTO): Promise<Booking[]> {
+    return this.bookingService.findAll(query);
   }
 
   @Get(':id')
@@ -59,7 +77,7 @@ export class BookingController {
     return booking;
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update booking by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Booking ID' })
   async updateBooking(
@@ -67,5 +85,15 @@ export class BookingController {
     @Body() updateData: Partial<Booking>,
   ): Promise<Booking> {
     return this.bookingService.updateBooking(id, updateData);
+  }
+
+  @Patch(':id/patch-professional')
+  @ApiOperation({ summary: 'Update booking by ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Booking ID' })
+  async updateProfessional(
+    @Param('id') id: string,
+    @Body() updateData: PatchProfessionalDTO,
+  ): Promise<Booking> {
+    return this.bookingService.patchProfessional(id, updateData.professionalId);
   }
 }

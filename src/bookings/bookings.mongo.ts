@@ -1,9 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { MongoSchema } from 'src/decorator/mongo-schema.decorator';
 import { BookingStatus } from './bookings.dto';
 import { Transform } from 'class-transformer';
+import { FileDto } from 'src/decorator/file.type';
+import { User } from 'src/user/user.mongo';
+import { Professional } from 'src/professional/professional.mongo';
 
 export type BookingDocument = Booking & Document;
 
@@ -17,17 +20,36 @@ export class Booking {
   @Transform((obj) => obj.value.toString())
   _id: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Customer' })
-  @ApiProperty({ type: String, description: 'ID of the customer who booked' })
-  user: Types.ObjectId;
+  @ApiProperty({
+    type: () => User,
+    description: 'Reference to the User who owns this',
+  })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  user: User | MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, required: true, ref: 'Professional' })
-  @ApiProperty({ type: String, description: 'ID of the professional assigned' })
-  professional: Types.ObjectId;
+  @ApiProperty({
+    type: () => Professional,
+    description: 'Reference to the User who owns this',
+  })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Professional',
+    required: false,
+    default:null
+  })
+  professional: Professional | MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true })
   @ApiProperty({ type: Date, description: 'Date and time of the booking' })
-  bookingDateTime: Date;
+  date: Date;
+
+  @Prop({ required: true })
+  @ApiProperty({ type: String, description: 'Date and time of the booking' })
+  time: String;
+
+  @Prop({ required: true })
+  @ApiProperty({ type: String, description: 'Date and time of the booking' })
+  city: String;
 
   @Prop({
     type: String,
@@ -46,14 +68,31 @@ export class Booking {
     description: 'Additional notes or instructions from the customer',
     required: false,
   })
-  notes?: string;
+  description?: string;
 
   @Prop()
   @ApiProperty({
     type: String,
     description: 'Address where service is to be provided',
   })
-  serviceAddress?: string;
+  address?: string;
+
+  @Prop()
+  @ApiProperty({
+    type: FileDto,
+    description: 'Address where service is to be provided',
+    isArray: true,
+    required: false,
+  })
+  images?: FileDto[];
+
+  @Prop()
+  @ApiProperty({
+    type: FileDto,
+    description: 'Address where service is to be provided',
+    required: false,
+  })
+  audio?: FileDto;
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking);
