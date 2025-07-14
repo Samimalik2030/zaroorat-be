@@ -101,3 +101,4 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 # marble-store-be
 # police-be
 # services-be
+# zaroorat-fe
