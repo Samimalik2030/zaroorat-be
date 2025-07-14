@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, isString, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  isString,
+  IsString,
+} from 'class-validator';
 import { isSet } from 'util/types';
 
 export enum Profession {
@@ -13,10 +19,10 @@ export enum Profession {
 }
 
 export class Coordinates {
-  @ApiProperty({ example: 31.5204 }) // Example latitude
+  @ApiProperty({ example: 31.5204 })
   latitude: number;
 
-  @ApiProperty({ example: 74.3587 }) // Example longitude
+  @ApiProperty({ example: 74.3587 })
   longitude: number;
 }
 
@@ -24,6 +30,10 @@ export class CreateProfessionalDto {
   @ApiProperty({ example: 'Ali Raza' })
   @IsString()
   name: string;
+
+  // @ApiProperty({ example: 'sami@gmail.com' })
+  // @IsString()
+  // email: string;
 
   @ApiProperty({ example: '03001234567' })
   @IsString()

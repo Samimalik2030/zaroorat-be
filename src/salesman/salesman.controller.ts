@@ -20,7 +20,6 @@ import { Salesman } from './salesman.mongo';
 import { SalesmanService } from './salesman.service';
 import { CreateSalesmanDto, SalesmanQueryDto } from './salesman.dto';
 
-
 @ApiTags('Salesman')
 @Controller('salesman')
 export class SalesmanController {
@@ -45,6 +44,7 @@ export class SalesmanController {
     description: 'List of Salesmans',
     type: [Salesman],
   })
+
   getAll(@Query() query: SalesmanQueryDto) {
     return this.SalesmanOfficerService.findAll(query);
   }
@@ -61,7 +61,7 @@ export class SalesmanController {
     return this.SalesmanOfficerService.findById(id);
   }
 
- @Get('/user/:userId')
+  @Get('/user/:userId')
   @ApiOperation({ summary: 'Get a Salesman by user ID' })
   @ApiParam({ name: 'userId', required: true, description: 'Salesman ID' })
   @ApiResponse({

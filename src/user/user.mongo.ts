@@ -1,12 +1,28 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Transform } from 'class-transformer';
+import { Exclude, Transform, Type } from 'class-transformer';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongoSchema } from '../decorator/mongo-schema.decorator';
 import { Role } from './user.dto';
 import { FileDto } from 'src/decorator/file.type';
 
 export type UserDocument = HydratedDocument<User>;
+
+class Address {
+  @ApiProperty({
+    example: 30.1575,
+    description: 'Latitude of the user address',
+  })
+  @Prop({ required: true })
+  latitude: number;
+
+  @ApiProperty({
+    example: 71.5249,
+    description: 'Longitude of the user address',
+  })
+  @Prop({ required: true })
+  longitude: number;
+}
 
 @MongoSchema()
 export class User {
@@ -78,6 +94,11 @@ export class User {
   })
   @Prop({ type: Date })
   updatedAt: Date;
+
+  @ApiProperty({ type: () => Address })
+  @Prop({ type: Address, default: null })
+  @Type(() => Address)
+  address: Address;
 
   @Exclude()
   @ApiProperty({

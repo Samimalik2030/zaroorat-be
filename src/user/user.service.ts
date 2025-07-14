@@ -43,6 +43,13 @@ export class UserService {
   async findById(id: string) {
     return await this.userModel.findById(id);
   }
+  async filter(filter: any) {
+    console.log(filter, 'filter');
+    const users = await this.userModel.find(filter);
+    console.log(users, 'users');
+    return users;
+  }
+
   async seedAdmin(body: Partial<User>): Promise<User> {
     const hashedPassword = await bcrypt.hash(body.password, 10);
     return await this.userModel.create({
@@ -228,6 +235,20 @@ Please use this email ${createdUser.email} and password ${password} to begin usi
     }
   }
 
+  async patchCoordinates(id: any, longitude: any, latitude: any) {
+    return await this.userModel.findByIdAndUpdate(
+      id,
+      {
+        address: {
+          latitude: latitude,
+          longitude: longitude,
+        },
+      },
+      {
+        returnDocument: 'after',
+      },
+    );
+  }
   async delete(id: any) {
     const deleted = await this.userModel.findByIdAndDelete(id);
     console.log(deleted);

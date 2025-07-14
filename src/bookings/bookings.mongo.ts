@@ -7,7 +7,6 @@ import { Transform } from 'class-transformer';
 import { FileDto } from 'src/decorator/file.type';
 import { User } from 'src/user/user.mongo';
 import { Professional } from 'src/professional/professional.mongo';
-
 export type BookingDocument = Booking & Document;
 
 @MongoSchema({ timestamps: true })
@@ -35,7 +34,7 @@ export class Booking {
     type: MongooseSchema.Types.ObjectId,
     ref: 'Professional',
     required: false,
-    default:null
+    default: null,
   })
   professional: Professional | MongooseSchema.Types.ObjectId;
 
@@ -50,6 +49,10 @@ export class Booking {
   @Prop({ required: true })
   @ApiProperty({ type: String, description: 'Date and time of the booking' })
   city: String;
+
+  @Prop({ required: true })
+  @ApiProperty({ type: String, description: 'Date and time of the booking' })
+  type: String;
 
   @Prop({
     type: String,

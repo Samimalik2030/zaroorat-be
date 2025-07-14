@@ -4,7 +4,7 @@ import { WhatsappMessageDto } from './whatsapp.dto';
 
 @Injectable()
 export class WhatsappService {
-  private readonly token = 'EAARn8TwsDMQBOZBrkHUufVBTwjislzaCJq3d8DUL9TZCeuZC1QyeToEfoMrG5CTfqUHZBflJRkIqvVBtmp6W2GNr6xETPZB3Fkrx3NgXBZCSwzjemqyvOZAG2Y9TMdDZBiJpRMAYX0SdwAy05oB1nQedVTc5GC1IB8Vkas9u7Y1McHlnibX2dMBYWqpHSZAhhewkIKnIjiVHwHGqZCqG0VCqZBF4cmvzh7N0TIZD'; 
+  private readonly token = 'EAARn8TwsDMQBOZC0ubuVEJ8rRMvQ44WM1LMs1WpKCxdn6iW2oXfcZAXJCBzPX8fDNOdl6YULQZB40CiyrWekev2MhZAdZCPohXsJBjIVk39pWunZCCcDZA70PFZAFffBZCWTP1EdBIOBSzgG67HWX9XavlUgovMJsVIKCCdSJ6bNFqeP8mh3838KSMBu0cYg6tJ1JP4AvLmItXxtoMVZCuySKCKqMxP90jnogZD'; 
   private readonly phoneNumberId = '692430513949189';
 
   private readonly apiUrl = `https://graph.facebook.com/v19.0/${this.phoneNumberId}/messages`;

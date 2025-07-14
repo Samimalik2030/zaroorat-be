@@ -21,7 +21,7 @@ export class Professional {
   _id: Types.ObjectId;
 
   @Prop({ required: true })
-  @ApiProperty({ type: String, example: 'john doe' })
+  @ApiProperty({ type: String, example: 'Sami Ullah' })
   name: string;
 
   @Prop({ required: true })

@@ -32,7 +32,7 @@ export class SalesmanService {
       email: createRecruiterDto.email,
       name: createRecruiterDto.name,
       role: Role.SALESMAN,
-      roleType:"Salesman Portal"
+      roleType: 'Salesman Portal',
     });
     const recruiter = new this.recruiterModel({
       ...createRecruiterDto,
@@ -44,7 +44,24 @@ export class SalesmanService {
   async findAll(query: SalesmanQueryDto): Promise<Salesman[]> {
     const filter: any = {};
 
-    if (query.city) filter.city = query.city;
+    if (query.city) {
+      filter.city = query.city;
+    }
+
+    if (query.name) {
+      const users = await this.UserService.filter({
+        fullName: { $regex: query.name, $options: 'i' },
+        role: Role.SALESMAN,
+      });
+      console.log(users, 'users');
+      const userIds = users.map((user) => user._id);
+
+      if (userIds.length > 0) {
+        filter.user = { $in: userIds };
+      } else {
+        return [];
+      }
+    }
 
     return this.recruiterModel.find(filter).populate('user').exec();
   }
@@ -83,12 +100,14 @@ export class SalesmanService {
 
   async getSalesmanByUser(id: string) {
     const foundUser = await this.UserService.findById(id);
-    if (foundUser) {
+    console.log(foundUser, 'Found User');
+    if (!foundUser) {
       return new NotFoundException('User not found');
     }
     const foundRecruiter = await this.recruiterModel.findOne({
       user: foundUser,
     });
+    console.log(foundRecruiter,'found recruiter')
     return foundRecruiter;
   }
 }

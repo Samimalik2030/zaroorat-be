@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TokenModule } from 'src/token/token.module';
 import { MailerModule } from 'src/mailer/mailer.module';
 import { ImageKitModule } from 'src/image-kit/image-kit.module';
+import { AppModule } from 'src/app.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { ImageKitModule } from 'src/image-kit/image-kit.module';
     }),
     TokenModule,
     MailerModule,
-    ImageKitModule
+    ImageKitModule,
+    forwardRef(() => AppModule),
   ],
   controllers: [UserController],
   providers: [UserService],

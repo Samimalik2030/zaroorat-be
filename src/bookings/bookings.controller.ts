@@ -22,13 +22,18 @@ import {
 } from '@nestjs/swagger';
 import {
   AnyFilesInterceptor,
+  FileFieldsInterceptor,
   FileInterceptor,
   FilesInterceptor,
   NoFilesInterceptor,
 } from '@nestjs/platform-express';
 import { Booking } from './bookings.mongo';
 import { BookingService } from './bookings.service';
-import { BookingQueryDTO, CreateBookingDto, PatchProfessionalDTO } from './bookings.dto';
+import {
+  BookingQueryDTO,
+  CreateBookingDto,
+  PatchProfessionalDTO,
+} from './bookings.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -40,28 +45,38 @@ export class BookingController {
     summary: 'Create a new booking (with optional audio and images)',
   })
   @ApiConsumes('multipart/form-data')
-  // @ApiBody({ type: CreateBookingDto })
-  // @UseInterceptors(
-  //   FileInterceptor('audio'),
-  //   FilesInterceptor('images', 10),
-  // )
-  @UseInterceptors(AnyFilesInterceptor())
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'images', maxCount: 5 },
+      { name: 'audio', maxCount: 1 },
+    ]),
+  )
   async createBooking(
     @Body() body: any,
-    @UploadedFile() audio?: Express.Multer.File,
-    @UploadedFiles() images?: Express.Multer.File[],
+    @UploadedFiles()
+    files: {
+      images?: Express.Multer.File[];
+      audio?: Express.Multer.File[];
+    },
   ): Promise<any> {
-    console.log(body);
+    const images = files.images || [];
+    const audio = files.audio?.[0] || null;
+
     return this.bookingService.createBooking(body, audio, images);
   }
-// @Get()
 
-// async findAll(@Query() query: ProfessionalQueryDto): Promise<Professional[]> {
-//   return this.professionalService.findAll(query);
-// }
+  // @Get()
+
+  // async findAll(@Query() query: ProfessionalQueryDto): Promise<Professional[]> {
+  //   return this.professionalService.findAll(query);
+  // }
   @Get()
-@ApiOperation({ summary: 'Get all bookings with optional filters' })
-@ApiResponse({ status: 200, description: 'List of Bookings', type: [Booking] })
+  @ApiOperation({ summary: 'Get all bookings with optional filters' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of Bookings',
+    type: [Booking],
+  })
   async getAllBooking(@Query() query: BookingQueryDTO): Promise<Booking[]> {
     return this.bookingService.findAll(query);
   }

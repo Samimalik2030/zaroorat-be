@@ -31,7 +31,8 @@ export class BookingService {
 
     return await this.bookingModel
       .find(filter)
-      .populate('professional', 'user')
+      .populate('user')
+      .populate('professional')
       .exec();
   }
 
@@ -53,6 +54,7 @@ export class BookingService {
 
     const user = await this.userService.findById(data.user);
     bookingData.user = user;
+    console.log(bookingData, 'booking data');
 
     return await this.bookingModel.create(bookingData);
   }
@@ -102,7 +104,7 @@ export class BookingService {
     if (updatedBooking.images.length > 0) {
       for (const image of updatedBooking.images) {
         await this.whatsappService.sendImageMessage('923085710094', image.url);
-        await new Promise((res) => setTimeout(res, 500)); 
+        await new Promise((res) => setTimeout(res, 500));
       }
     }
     return updatedBooking;

@@ -12,7 +12,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import {
   AuthUserDto,
   ForgotPasswordDTO,
@@ -31,6 +36,8 @@ import { JwtAuthGuard } from 'src/guards/jwtAuthGuard';
 import { MessageDto } from 'src/common/message.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageKitService } from 'src/image-kit/image-kit.service';
+import { AdminAnalyticsDto } from 'src/admin.dto';
+import { AppService } from 'src/app.service';
 
 @Controller('auth')
 export class UserController {
@@ -39,6 +46,7 @@ export class UserController {
     private readonly tokenService: TokenService,
     private readonly mailerService: MailerService,
     private readonly imageKitService: ImageKitService,
+    private readonly appService: AppService,
   ) {}
 
   @Post('sign-in')
@@ -115,6 +123,23 @@ export class UserController {
   async authUser(@Body() body: SignInDto, @Req() req: Request): Promise<User> {
     return await this.userService.first({ email: req.user.email });
   }
+
+  @Get('/stats')
+  @ApiOperation({
+    summary: 'Get admin analytics stats',
+    description:
+      'Fetches overall statistics such as total professionals, customers, bookings, job applications, and user activity.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Admin analytics data retrieved successfully.',
+    type: AdminAnalyticsDto,
+  })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  getStats(): Promise<AdminAnalyticsDto> {
+    return this.appService.getAnalytics();
+  }
+
   @Patch('update-profile/:id')
   async updateProfile(
     @Param('id') id: string,
@@ -123,26 +148,35 @@ export class UserController {
     return this.userService.updateProfile(id, body);
   }
 
-  @Post('upload')
+  @Patch('/:id/upload-profile')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+  async uploadImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     const uploaded = await this.imageKitService.uploadImage(file);
-    return uploaded;
+    const updatedUser = await this.userService.updateProfile(id, {
+      profileImage: {
+        fileId: uploaded.fileId,
+        url: uploaded.url,
+      },
+    });
+    return updatedUser;
   }
 
-  @Post('upload-profile')
-  @UseInterceptors(FileInterceptor('file'))
-  @UseGuards(JwtAuthGuard)
-  async uploadProfileImage(
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
-  ) {
-    const userId = req.user._id;
-    console.log(file)
-    const uploaded = await this.imageKitService.uploadImage(file);
-    const user = await this.userService.updateProfile(userId, {
-      profileImage: uploaded,
-    });
-    return user
-  }
+  // @Post('upload-profile')
+  // @UseInterceptors(FileInterceptor('file'))
+  // @UseGuards(JwtAuthGuard)
+  // async uploadProfileImage(
+  //   @UploadedFile() file: Express.Multer.File,
+  //   @Req() req: Request,
+  // ) {
+  //   const userId = req.user._id;
+  //   console.log(file);
+  //   const uploaded = await this.imageKitService.uploadImage(file);
+  //   const user = await this.userService.updateProfile(userId, {
+  //     profileImage: uploaded,
+  //   });
+  //   return user;
+  // }
 }

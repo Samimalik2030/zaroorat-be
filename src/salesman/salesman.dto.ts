@@ -52,13 +52,14 @@ export class SalesmanQueryDto {
   // @IsOptional()
   // cnic?: string;
 
-  // @ApiProperty({
-  //   example: '03001234567',
-  //   description: 'Phone number',
-  // })
-  // @IsString()
-  // @IsOptional()
-  // phone?: string;
+  @ApiProperty({
+    example: '03001234567',
+    description: 'Phone number',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  name?: string;
 
   @ApiProperty({
     example: 'Lahore',

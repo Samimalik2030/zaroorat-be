@@ -8,6 +8,7 @@ export enum Role {
   CITY_MANAGER = 'City Manager',
   CUSTOMER = 'Customer',
   SALESMAN = 'Salesman',
+  PROFESSIONAL = 'Professional',
 }
 
 export enum TokenType {
@@ -126,7 +127,7 @@ export class CreateUserDto {
   @IsString()
   name: string;
 
-    @ApiProperty({ default: 535443 })
+  @ApiProperty({ default: 535443 })
   @IsNotEmpty()
   @IsString()
   roleType: string;
