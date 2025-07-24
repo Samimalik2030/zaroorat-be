@@ -13,13 +13,17 @@ export class CreateBookingDto {
   @IsDateString()
   date: string;
 
-  @ApiProperty({ example: '2025-07-01T12:00:00Z' })
+  @ApiProperty({ example: '2025-07-01T12:00:00Z' ,required:true})
   @IsString()
   time: string;
 
   @ApiProperty({ example: 'Please be on time.' })
   @IsString()
   description: string;
+  
+   @ApiProperty({ example: 'Multan' })
+  @IsString()
+  city: string;
 
   @ApiProperty({ example: 'Please be on time.' })
   @IsString()
